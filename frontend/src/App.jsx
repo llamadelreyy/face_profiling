@@ -20,8 +20,8 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        {/* <Route path="/" element={<Navigate to="/home" replace />} /> */}
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/recognition" element={<FacialRecognition />} />
         <Route path="/test" element={<Test />} />
         <Route path="/alarm-verification" element={<AlarmVerification />} />

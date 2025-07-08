@@ -221,17 +221,18 @@ const VehicleScanner = () => {
         
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gridTemplateRows: '1fr 1fr',
+          gridTemplateColumns: '2fr 1fr',
+          gridTemplateRows: '1fr 180px',
           gap: 'clamp(0.5rem, 1.5vw, 1rem)',
           flex: 1,
           overflow: 'hidden',
           padding: 'clamp(0.5rem, 1.5vw, 1rem)',
           height: 'calc(100vh - clamp(120px, 15vh, 160px))'
         }}>
-          {/* Top Left - Main Scanner Display */}
+          {/* Left - Main Scanner Display */}
           <div style={{
-            gridColumn: '1 / 3',
+            gridColumn: '1',
+            gridRow: '1',
             background: 'rgba(25, 25, 45, 0.75)',
             borderRadius: '12px',
             border: '2px solid rgba(0, 191, 255, 0.4)',
@@ -396,8 +397,10 @@ const VehicleScanner = () => {
             </div>
           </div>
 
-          {/* Top Right - Vehicle Information */}
+          {/* Right - Vehicle Information */}
           <div style={{
+            gridColumn: '2',
+            gridRow: '1',
             background: 'rgba(25, 25, 45, 0.75)',
             borderRadius: '12px',
             border: '1px solid rgba(0, 191, 255, 0.3)',
@@ -476,22 +479,33 @@ const VehicleScanner = () => {
             </div>
           </div>
 
-          {/* Bottom Left - System Statistics */}
+          {/* Bottom Section - Statistics, Access Control, and Alerts */}
           <div style={{
-            background: 'rgba(25, 25, 45, 0.75)',
-            borderRadius: '12px',
-            border: '1px solid rgba(0, 191, 255, 0.3)',
-            boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-            padding: 'clamp(1rem, 2.5vw, 1.5rem)',
-            display: 'flex',
-            flexDirection: 'column'
+            gridColumn: '1 / 3',
+            gridRow: '2',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: 'clamp(0.5rem, 1.5vw, 1rem)',
+            height: '100%',
+            overflow: 'hidden'
           }}>
+            {/* System Statistics */}
+            <div style={{
+              background: 'rgba(25, 25, 45, 0.75)',
+              borderRadius: '8px',
+              border: '1px solid rgba(0, 191, 255, 0.3)',
+              boxShadow: '0 0 10px rgba(0, 191, 255, 0.2)',
+              padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden'
+            }}>
             <h3 style={{
               color: '#87ceeb',
-              fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
-              margin: '0 0 clamp(1rem, 2vw, 1.5rem) 0',
+              fontSize: 'clamp(0.9rem, 1.8vw, 1.1rem)',
+              margin: '0 0 clamp(0.5rem, 1vw, 0.75rem) 0',
               borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-              paddingBottom: 'clamp(0.5rem, 1vw, 0.75rem)',
+              paddingBottom: 'clamp(0.25rem, 0.5vw, 0.5rem)',
               textAlign: 'center'
             }}>
               TODAY'S STATISTICS
@@ -550,11 +564,11 @@ const VehicleScanner = () => {
             </div>
 
             <div style={{
-              marginTop: 'clamp(0.75rem, 1.5vw, 1rem)',
-              padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+              marginTop: 'clamp(0.5rem, 1vw, 0.75rem)',
+              padding: 'clamp(0.25rem, 0.5vw, 0.5rem)',
               background: 'rgba(40, 40, 80, 0.6)',
               borderRadius: '6px',
-              fontSize: 'clamp(0.7rem, 1.4vw, 0.8rem)'
+              fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                 <span style={{ color: '#87ceeb' }}>Avg Scan Time:</span>
@@ -570,19 +584,20 @@ const VehicleScanner = () => {
           {/* Bottom Middle - Access Control */}
           <div style={{
             background: 'rgba(25, 25, 45, 0.75)',
-            borderRadius: '12px',
+            borderRadius: '8px',
             border: '1px solid rgba(0, 191, 255, 0.3)',
-            boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-            padding: 'clamp(1rem, 2.5vw, 1.5rem)',
+            boxShadow: '0 0 10px rgba(0, 191, 255, 0.2)',
+            padding: 'clamp(0.5rem, 1vw, 0.75rem)',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            overflow: 'hidden'
           }}>
             <h3 style={{
               color: '#87ceeb',
-              fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
-              margin: '0 0 clamp(1rem, 2vw, 1.5rem) 0',
+              fontSize: 'clamp(0.9rem, 1.8vw, 1.1rem)',
+              margin: '0 0 clamp(0.5rem, 1vw, 0.75rem) 0',
               borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-              paddingBottom: 'clamp(0.5rem, 1vw, 0.75rem)',
+              paddingBottom: 'clamp(0.25rem, 0.5vw, 0.5rem)',
               textAlign: 'center'
             }}>
               ACCESS CONTROL
@@ -592,13 +607,14 @@ const VehicleScanner = () => {
               flex: 1,
               display: 'flex',
               flexDirection: 'column',
-              gap: 'clamp(0.75rem, 1.5vw, 1rem)',
-              fontSize: 'clamp(0.7rem, 1.4vw, 0.85rem)'
+              gap: 'clamp(0.25rem, 0.5vw, 0.5rem)',
+              fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
+              overflow: 'hidden'
             }}>
               <div style={{
                 background: 'rgba(40, 40, 80, 0.6)',
-                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
-                borderRadius: '8px',
+                padding: 'clamp(0.25rem, 0.5vw, 0.5rem)',
+                borderRadius: '6px',
                 border: '1px solid rgba(0, 191, 255, 0.2)'
               }}>
                 <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Registration Status</div>
@@ -609,22 +625,22 @@ const VehicleScanner = () => {
 
               <div style={{
                 background: 'rgba(40, 40, 80, 0.6)',
-                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
-                borderRadius: '8px',
+                padding: 'clamp(0.25rem, 0.5vw, 0.5rem)',
+                borderRadius: '6px',
                 border: '1px solid rgba(0, 191, 255, 0.2)'
               }}>
-                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Insurance & Road Tax</div>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.25rem' }}>Insurance & Road Tax</div>
                 <div style={{ color: getStatusColor(vehicleData.insuranceStatus) }}>Insurance: {vehicleData.insuranceStatus}</div>
                 <div style={{ color: getStatusColor(vehicleData.roadTaxStatus) }}>Road Tax: {vehicleData.roadTaxStatus}</div>
               </div>
 
               <div style={{
                 background: 'rgba(40, 40, 80, 0.6)',
-                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
-                borderRadius: '8px',
+                padding: 'clamp(0.25rem, 0.5vw, 0.5rem)',
+                borderRadius: '6px',
                 border: '1px solid rgba(0, 191, 255, 0.2)'
               }}>
-                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Access Details</div>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.25rem' }}>Access Details</div>
                 <div style={{ color: '#e0e0e0' }}>Zone: {vehicleData.parkingZone}</div>
                 <div style={{ color: '#e0e0e0' }}>Purpose: {vehicleData.purpose}</div>
                 <div style={{ color: '#e0e0e0' }}>Valid Until: {vehicleData.validUntil}</div>
@@ -632,8 +648,8 @@ const VehicleScanner = () => {
 
               <div style={{
                 background: 'rgba(40, 40, 80, 0.6)',
-                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
-                borderRadius: '8px',
+                padding: 'clamp(0.25rem, 0.5vw, 0.5rem)',
+                borderRadius: '6px',
                 border: '1px solid rgba(0, 191, 255, 0.2)'
               }}>
                 <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Entry History</div>
@@ -646,19 +662,20 @@ const VehicleScanner = () => {
           {/* Bottom Right - Security Alerts */}
           <div style={{
             background: 'rgba(25, 25, 45, 0.75)',
-            borderRadius: '12px',
+            borderRadius: '8px',
             border: '1px solid rgba(0, 191, 255, 0.3)',
-            boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-            padding: 'clamp(1rem, 2.5vw, 1.5rem)',
+            boxShadow: '0 0 10px rgba(0, 191, 255, 0.2)',
+            padding: 'clamp(0.5rem, 1vw, 0.75rem)',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            overflow: 'hidden'
           }}>
             <h3 style={{
               color: '#87ceeb',
-              fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
-              margin: '0 0 clamp(1rem, 2vw, 1.5rem) 0',
+              fontSize: 'clamp(0.9rem, 1.8vw, 1.1rem)',
+              margin: '0 0 clamp(0.5rem, 1vw, 0.75rem) 0',
               borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-              paddingBottom: 'clamp(0.5rem, 1vw, 0.75rem)',
+              paddingBottom: 'clamp(0.25rem, 0.5vw, 0.5rem)',
               textAlign: 'center'
             }}>
               SECURITY ALERTS
@@ -668,23 +685,23 @@ const VehicleScanner = () => {
               flex: 1,
               display: 'flex',
               flexDirection: 'column',
-              gap: 'clamp(0.5rem, 1vw, 0.75rem)',
+              gap: 'clamp(0.25rem, 0.5vw, 0.5rem)',
               overflowY: 'auto',
               maxHeight: '100%'
             }}>
               {alerts.map((alert, index) => (
                 <div key={alert.id} style={{
                   background: 'rgba(40, 40, 80, 0.6)',
-                  padding: 'clamp(0.5rem, 1vw, 0.75rem)',
-                  borderRadius: '6px',
+                  padding: 'clamp(0.25rem, 0.5vw, 0.5rem)',
+                  borderRadius: '4px',
                   border: `1px solid ${getAlertColor(alert.level)}40`,
-                  fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)'
+                  fontSize: 'clamp(0.6rem, 1.1vw, 0.7rem)'
                 }}>
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '0.25rem'
+                    marginBottom: '0.1rem'
                   }}>
                     <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>{alert.id}</span>
                     <span style={{
@@ -695,23 +712,24 @@ const VehicleScanner = () => {
                       {alert.level}
                     </span>
                   </div>
-                  <div style={{ color: '#e0e0e0', marginBottom: '0.25rem', lineHeight: '1.3' }}>
+                  <div style={{ color: '#e0e0e0', marginBottom: '0.1rem', lineHeight: '1.2' }}>
                     {alert.message}
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85em' }}>
                     <span style={{ color: '#87ceeb' }}>Time: {alert.time}</span>
                     <span style={{ color: '#00bfff' }}>Plate: {alert.plate}</span>
                   </div>
                   <div style={{
-                    marginTop: '0.25rem',
+                    marginTop: '0.1rem',
                     color: alert.status === 'ACTIVE' ? '#ff4444' : alert.status === 'ACKNOWLEDGED' ? '#ffa500' : '#00ff00',
                     fontWeight: 'bold',
-                    fontSize: '0.85em'
+                    fontSize: '0.8em'
                   }}>
                     Status: {alert.status}
                   </div>
                 </div>
               ))}
+            </div>
             </div>
           </div>
         </div>
