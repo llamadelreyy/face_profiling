@@ -246,7 +246,9 @@ const IdentificationTracking = () => {
           display: 'flex',
           flex: 1,
           overflow: 'hidden',
-          padding: 'clamp(0.25rem, 1vw, 0.75rem)',
+          paddingTop: 'clamp(0.25rem, 1vw, 0.75rem)',
+          paddingBottom: 'clamp(0.25rem, 1vw, 0.75rem)',
+          paddingLeft: 'clamp(0.25rem, 1vw, 0.75rem)',
           paddingRight: 'clamp(0.25rem, 1vw, 0.75rem)',
           gap: 'clamp(0.5rem, 1.5vw, 1rem)',
           height: 'calc(100vh - clamp(120px, 15vh, 160px))'
@@ -555,7 +557,8 @@ const IdentificationTracking = () => {
             display: 'flex',
             flexDirection: 'column',
             gap: 'clamp(0.5rem, 1vw, 0.75rem)',
-            minHeight: 0
+            minHeight: 0,
+            marginRight: 'clamp(0.25rem, 1vw, 0.75rem)'
           }}>
             {/* Camera Section */}
             <div style={{
