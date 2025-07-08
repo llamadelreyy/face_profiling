@@ -6,106 +6,77 @@ import '../styles/security.css';
 const VehicleScanner = () => {
   const [activeStation, setActiveStation] = useState('ALL');
   const [isScanning, setIsScanning] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('Vehicle scanner system ready');
-  const [scannedVehicle, setScannedVehicle] = useState(null);
-  const [scanHistory, setScanHistory] = useState([]);
+  const [statusMessage, setStatusMessage] = useState('Vehicle scanner ready - Position vehicle at checkpoint');
+  const [currentScan, setCurrentScan] = useState(null);
+  const [scanProgress, setScanProgress] = useState(0);
 
-  // Sample vehicle data (Malaysian context)
-  const [currentVehicle, setCurrentVehicle] = useState({
-    id: 'VS-2024-001',
+  // Current vehicle scan data
+  const [vehicleData, setVehicleData] = useState({
+    scanId: 'VS-2024-001',
     timestamp: new Date().toLocaleString(),
-    confidence: 96.8,
-    status: 'AUTHORIZED',
-    vehicle: {
-      licensePlate: 'WKL 1234 A',
-      state: 'Kuala Lumpur',
-      vehicleType: 'Sedan',
-      make: 'Toyota',
-      model: 'Camry',
-      year: 2022,
-      color: 'Silver',
-      engineCapacity: '2.5L',
-      fuelType: 'Petrol',
-      transmission: 'Automatic'
-    },
-    registration: {
-      registrationNumber: 'WKL 1234 A',
-      registeredOwner: 'Ahmad Bin Abdullah',
-      registrationDate: '15 March 2022',
-      expiryDate: '14 March 2025',
-      roadTaxExpiry: '31 December 2024',
-      insuranceCompany: 'Great Eastern General Insurance',
-      insuranceExpiry: '15 March 2025',
-      policyNumber: 'GE-AUTO-2024-567890'
-    },
-    driver: {
-      fullName: 'Ahmad Bin Abdullah',
-      icNumber: '850315-08-1234',
-      licenseNumber: 'D1234567890',
-      licenseClass: 'D, DA',
-      licenseExpiry: '15 March 2027',
-      phoneNumber: '+60 12-345 6789',
-      address: 'No. 123, Jalan Bukit Bintang, 55100 Kuala Lumpur'
-    },
-    security: {
-      clearanceLevel: 'AUTHORIZED',
-      accessType: 'EMPLOYEE',
-      department: 'Airport Operations',
-      validUntil: '31 December 2024',
-      parkingZone: 'Staff Parking Zone A',
-      lastEntry: '2024-01-07 08:30:00',
-      entryCount: 156,
-      violations: 'None'
-    },
-    inspection: {
-      lastInspection: '2024-01-01',
-      inspectionStatus: 'PASSED',
-      nextInspection: '2025-01-01',
-      inspectedBy: 'Security Officer Rahman',
-      notes: 'Vehicle cleared for airport access'
-    }
+    plateNumber: 'WKL 8888 X',
+    plateConfidence: 98.5,
+    vehicleType: 'SUV',
+    make: 'Honda',
+    model: 'CR-V',
+    year: 2023,
+    color: 'White',
+    owner: 'Datuk Ahmad Bin Hassan',
+    icNumber: '750612-08-5678',
+    registrationStatus: 'VALID',
+    insuranceStatus: 'ACTIVE',
+    roadTaxStatus: 'VALID',
+    securityClearance: 'VIP',
+    accessLevel: 'UNRESTRICTED',
+    violations: [],
+    lastEntry: '2024-01-06 16:45:00',
+    entryCount: 89,
+    parkingZone: 'VIP Zone A',
+    purpose: 'Official Business',
+    escort: 'Required',
+    validUntil: '31 Dec 2024'
   });
 
-  const [recentScans, setRecentScans] = useState([
+  // Live scanning statistics
+  const [scanStats, setScanStats] = useState({
+    todayScans: 1247,
+    authorized: 1156,
+    denied: 23,
+    pending: 68,
+    violations: 5,
+    avgScanTime: '2.3s',
+    systemUptime: '99.8%',
+    lastMaintenance: '2024-01-01'
+  });
+
+  // Alert system
+  const [alerts, setAlerts] = useState([
     {
-      id: 'VS-001',
-      time: '14:45:23',
-      plate: 'WKL 1234 A',
-      driver: 'Ahmad Bin Abdullah',
-      status: 'AUTHORIZED',
-      clearance: 'EMPLOYEE'
+      id: 'ALT-001',
+      time: '15:42:18',
+      type: 'SECURITY',
+      level: 'HIGH',
+      message: 'Unauthorized vehicle detected at Gate 3',
+      plate: 'ABC 1234 Z',
+      status: 'ACTIVE'
     },
     {
-      id: 'VS-002',
-      time: '14:43:15',
-      plate: 'SGR 5678 B',
-      driver: 'Siti Binti Rahman',
-      status: 'AUTHORIZED',
-      clearance: 'VISITOR'
+      id: 'ALT-002',
+      time: '15:38:45',
+      type: 'SYSTEM',
+      level: 'MEDIUM',
+      message: 'Camera 2 requires calibration',
+      plate: 'N/A',
+      status: 'ACKNOWLEDGED'
     },
     {
-      id: 'VS-003',
-      time: '14:41:08',
-      plate: 'JHR 9876 C',
-      driver: 'Unknown',
-      status: 'DENIED',
-      clearance: 'NONE'
-    },
-    {
-      id: 'VS-004',
-      time: '14:38:52',
-      plate: 'PEN 2468 D',
-      driver: 'Lim Wei Ming',
-      status: 'AUTHORIZED',
-      clearance: 'CONTRACTOR'
-    },
-    {
-      id: 'VS-005',
-      time: '14:36:41',
-      plate: 'SBH 1357 E',
-      driver: 'John Smith',
-      status: 'PENDING',
-      clearance: 'VISITOR'
+      id: 'ALT-003',
+      time: '15:35:12',
+      type: 'VIOLATION',
+      level: 'LOW',
+      message: 'Expired road tax detected',
+      plate: 'JHR 5555 B',
+      status: 'RESOLVED'
     }
   ]);
 
@@ -124,37 +95,46 @@ const VehicleScanner = () => {
       root.className = 'test-body';
     }
 
-    // Simulate real-time updates
+    // Real-time updates
     const interval = setInterval(() => {
-      // Update confidence slightly
-      setCurrentVehicle(prev => ({
+      // Update scan statistics
+      setScanStats(prev => ({
         ...prev,
-        confidence: 95.0 + Math.random() * 3.0
+        todayScans: prev.todayScans + Math.floor(Math.random() * 3),
+        authorized: prev.authorized + Math.floor(Math.random() * 2),
+        pending: Math.max(0, prev.pending + Math.floor(Math.random() * 3) - 1)
       }));
 
-      // Add new scan occasionally
-      if (Math.random() > 0.92) {
-        const plates = ['WKL 1234 A', 'SGR 5678 B', 'JHR 9876 C', 'PEN 2468 D', 'SBH 1357 E'];
-        const drivers = ['Ahmad Bin Abdullah', 'Siti Binti Rahman', 'Lim Wei Ming', 'John Smith', 'Unknown'];
-        const statuses = ['AUTHORIZED', 'DENIED', 'PENDING'];
-        const clearances = ['EMPLOYEE', 'VISITOR', 'CONTRACTOR', 'NONE'];
+      // Update plate confidence
+      setVehicleData(prev => ({
+        ...prev,
+        plateConfidence: 97.0 + Math.random() * 2.5
+      }));
+
+      // Occasionally add new alerts
+      if (Math.random() > 0.95) {
+        const alertTypes = ['SECURITY', 'SYSTEM', 'VIOLATION'];
+        const alertLevels = ['HIGH', 'MEDIUM', 'LOW'];
+        const messages = [
+          'Suspicious vehicle behavior detected',
+          'License plate scanner maintenance required',
+          'Vehicle overstay in restricted zone',
+          'Unregistered vehicle attempting entry'
+        ];
         
-        const now = new Date();
-        const time = now.toTimeString().slice(0, 8);
-        const randomIndex = Math.floor(Math.random() * plates.length);
-        
-        const newScan = {
-          id: `VS-${String(Date.now()).slice(-3)}`,
-          time,
-          plate: plates[randomIndex],
-          driver: drivers[randomIndex],
-          status: statuses[Math.floor(Math.random() * statuses.length)],
-          clearance: clearances[randomIndex]
+        const newAlert = {
+          id: `ALT-${String(Date.now()).slice(-3)}`,
+          time: new Date().toTimeString().slice(0, 8),
+          type: alertTypes[Math.floor(Math.random() * alertTypes.length)],
+          level: alertLevels[Math.floor(Math.random() * alertLevels.length)],
+          message: messages[Math.floor(Math.random() * messages.length)],
+          plate: `${['WKL', 'SGR', 'JHR'][Math.floor(Math.random() * 3)]} ${Math.floor(Math.random() * 9999)} ${['A', 'B', 'C'][Math.floor(Math.random() * 3)]}`,
+          status: 'ACTIVE'
         };
 
-        setRecentScans(prev => [newScan, ...prev.slice(0, 4)]);
+        setAlerts(prev => [newAlert, ...prev.slice(0, 2)]);
       }
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -183,41 +163,53 @@ const VehicleScanner = () => {
 
   const handleStartScan = () => {
     setIsScanning(true);
-    setStatusMessage('Scanning vehicle and license plate...');
+    setScanProgress(0);
+    setStatusMessage('Initializing vehicle scanner...');
     
-    // Simulate scanning process
-    setTimeout(() => {
-      setIsScanning(false);
-      setStatusMessage('Vehicle scan completed successfully');
-      setScannedVehicle(currentVehicle);
-      
-      // Update current vehicle data
-      setCurrentVehicle(prev => ({
-        ...prev,
-        id: `VS-2024-${String(Date.now()).slice(-3)}`,
-        timestamp: new Date().toLocaleString()
-      }));
-    }, 4000);
+    // Simulate scanning progress
+    const progressInterval = setInterval(() => {
+      setScanProgress(prev => {
+        const newProgress = prev + Math.random() * 15;
+        if (newProgress >= 100) {
+          clearInterval(progressInterval);
+          setIsScanning(false);
+          setStatusMessage('Vehicle scan completed - Access granted');
+          setCurrentScan(vehicleData);
+          return 100;
+        }
+        
+        // Update status messages based on progress
+        if (newProgress > 80) {
+          setStatusMessage('Verifying security clearance...');
+        } else if (newProgress > 60) {
+          setStatusMessage('Cross-referencing database...');
+        } else if (newProgress > 40) {
+          setStatusMessage('Analyzing license plate...');
+        } else if (newProgress > 20) {
+          setStatusMessage('Capturing vehicle image...');
+        }
+        
+        return newProgress;
+      });
+    }, 200);
   };
 
   const getStatusColor = (status) => {
     switch(status.toUpperCase()) {
-      case 'AUTHORIZED': return '#00ff00';
-      case 'DENIED': return '#ff4444';
-      case 'PENDING': return '#ffa500';
-      case 'EXPIRED': return '#ff6b6b';
+      case 'VALID': case 'ACTIVE': case 'AUTHORIZED': return '#00ff00';
+      case 'EXPIRED': case 'DENIED': case 'INVALID': return '#ff4444';
+      case 'PENDING': case 'WARNING': return '#ffa500';
+      case 'VIP': case 'UNRESTRICTED': return '#ff6b6b';
       default: return '#87ceeb';
     }
   };
 
-  const getClearanceColor = (clearance) => {
-    switch(clearance.toUpperCase()) {
-      case 'EMPLOYEE': return '#4ecdc4';
-      case 'VISITOR': return '#96ceb4';
-      case 'CONTRACTOR': return '#45b7d1';
-      case 'VIP': return '#ff6b6b';
-      case 'NONE': return '#95a5a6';
-      default: return '#87ceeb';
+  const getAlertColor = (level) => {
+    switch(level.toUpperCase()) {
+      case 'HIGH': return '#ff4444';
+      case 'MEDIUM': return '#ffa500';
+      case 'LOW': return '#87ceeb';
+      default: return '#e0e0e0';
     }
   };
 
@@ -228,517 +220,498 @@ const VehicleScanner = () => {
         <Header title="Vehicle Scanner System" />
         
         <div style={{
-          display: 'flex',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gridTemplateRows: '1fr 1fr',
+          gap: 'clamp(0.5rem, 1.5vw, 1rem)',
           flex: 1,
           overflow: 'hidden',
-          paddingTop: 'clamp(0.25rem, 1vw, 0.75rem)',
-          paddingBottom: 'clamp(0.25rem, 1vw, 0.75rem)',
-          paddingLeft: 'clamp(0.25rem, 1vw, 0.75rem)',
-          paddingRight: 'clamp(0.25rem, 1vw, 0.75rem)',
-          gap: 'clamp(0.5rem, 1.5vw, 1rem)',
+          padding: 'clamp(0.5rem, 1.5vw, 1rem)',
           height: 'calc(100vh - clamp(120px, 15vh, 160px))'
         }}>
-          {/* Left Panel - Vehicle Scanner */}
+          {/* Top Left - Main Scanner Display */}
           <div style={{
-            flex: '0 0 40%',
+            gridColumn: '1 / 3',
+            background: 'rgba(25, 25, 45, 0.75)',
+            borderRadius: '12px',
+            border: '2px solid rgba(0, 191, 255, 0.4)',
+            boxShadow: '0 0 20px rgba(0, 191, 255, 0.3)',
+            padding: 'clamp(1rem, 2.5vw, 1.5rem)',
             display: 'flex',
-            flexDirection: 'column',
-            gap: 'clamp(0.5rem, 1vw, 0.75rem)',
-            minHeight: 0
+            flexDirection: 'column'
           }}>
-            {/* Scanner Camera */}
-            <div style={{
-              flex: '0 0 clamp(55%, 60vh, 65%)',
-              background: 'rgba(25, 25, 45, 0.75)',
-              borderRadius: '8px',
-              border: '1px solid rgba(0, 191, 255, 0.3)',
-              boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-              padding: 'clamp(0.75rem, 2vw, 1rem)',
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: 0
+            <h2 style={{
+              color: '#00bfff',
+              fontSize: 'clamp(1.2rem, 2.8vw, 1.8rem)',
+              margin: '0 0 clamp(1rem, 2vw, 1.5rem) 0',
+              textAlign: 'center',
+              borderBottom: '2px solid rgba(0, 191, 255, 0.5)',
+              paddingBottom: 'clamp(0.5rem, 1vw, 0.75rem)'
             }}>
-              <h3 style={{
-                color: '#87ceeb',
-                fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
-                margin: '0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0',
-                borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-                paddingBottom: 'clamp(0.15rem, 0.5vw, 0.25rem)',
-                textAlign: 'center'
-              }}>
-                Vehicle Scanner Camera
-              </h3>
+              VEHICLE CHECKPOINT SCANNER
+            </h2>
 
-              {/* Camera Display */}
+            {/* Scanner Camera View */}
+            <div style={{
+              flex: 1,
+              background: '#000',
+              borderRadius: '8px',
+              border: '3px solid rgba(0, 191, 255, 0.4)',
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '200px',
+              overflow: 'hidden'
+            }}>
+              {/* Scanner Grid Overlay */}
               <div style={{
-                flex: 1,
-                background: '#000',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundImage: `
+                  linear-gradient(rgba(0, 191, 255, 0.1) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(0, 191, 255, 0.1) 1px, transparent 1px)
+                `,
+                backgroundSize: '20px 20px',
+                opacity: 0.3
+              }} />
+
+              {/* License Plate Detection Zone */}
+              <div style={{
+                position: 'absolute',
+                top: '30%',
+                left: '25%',
+                right: '25%',
+                height: '40%',
+                border: '2px dashed rgba(0, 191, 255, 0.6)',
                 borderRadius: '8px',
-                border: '2px solid rgba(0, 191, 255, 0.3)',
-                position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minHeight: '250px',
-                overflow: 'hidden'
+                background: isScanning ? 'rgba(0, 191, 255, 0.1)' : 'transparent'
               }}>
                 <div style={{
                   textAlign: 'center',
                   color: '#87ceeb'
                 }}>
                   <div style={{
-                    fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
-                    marginBottom: '0.5rem',
-                    opacity: 0.6,
-                    fontWeight: 'bold'
+                    fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)',
+                    fontWeight: 'bold',
+                    marginBottom: '0.5rem'
                   }}>
-                    SCANNER
+                    {isScanning ? vehicleData.plateNumber : 'POSITION VEHICLE'}
                   </div>
                   <div style={{
-                    fontSize: 'clamp(0.8rem, 2vw, 1.1rem)',
-                    fontWeight: 'bold'
-                  }}>
-                    License Plate Recognition
-                  </div>
-                  <div style={{
-                    fontSize: 'clamp(0.7rem, 1.5vw, 0.9rem)',
-                    marginTop: '0.25rem',
+                    fontSize: 'clamp(0.8rem, 1.8vw, 1rem)',
                     opacity: 0.8
                   }}>
-                    Vehicle Identification System
+                    {isScanning ? `Confidence: ${vehicleData.plateConfidence.toFixed(1)}%` : 'License Plate Detection Zone'}
                   </div>
                 </div>
+              </div>
 
-                {/* Scanning overlay */}
-                {isScanning && (
+              {/* Scanning Progress Bar */}
+              {isScanning && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '10px',
+                  left: '10px',
+                  right: '10px',
+                  height: '8px',
+                  background: 'rgba(0, 0, 0, 0.7)',
+                  borderRadius: '4px',
+                  overflow: 'hidden'
+                }}>
                   <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(0, 191, 255, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    animation: 'pulse 1.5s infinite'
-                  }}>
-                    <div style={{
-                      color: '#00bfff',
-                      fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
-                      fontWeight: 'bold',
-                      textShadow: '0 0 10px rgba(0, 191, 255, 0.8)'
-                    }}>
-                      SCANNING VEHICLE...
-                    </div>
-                  </div>
-                )}
-              </div>
+                    height: '100%',
+                    width: `${scanProgress}%`,
+                    background: 'linear-gradient(90deg, #00bfff, #87ceeb)',
+                    borderRadius: '4px',
+                    transition: 'width 0.3s ease'
+                  }} />
+                </div>
+              )}
 
-              {/* Control Button */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                marginTop: 'clamp(0.5rem, 1.5vw, 0.75rem)'
-              }}>
-                <button
-                  onClick={handleStartScan}
-                  disabled={isScanning}
-                  style={{
-                    padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem)',
-                    background: isScanning ? 'rgba(135, 206, 235, 0.3)' : 'linear-gradient(135deg, #00bfff, #87ceeb)',
-                    color: isScanning ? '#87ceeb' : '#000',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-                    fontWeight: 'bold',
-                    cursor: isScanning ? 'not-allowed' : 'pointer',
-                    boxShadow: isScanning ? 'none' : '0 0 15px rgba(0, 191, 255, 0.4)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {isScanning ? 'SCANNING...' : 'START VEHICLE SCAN'}
-                </button>
-              </div>
-
-              {/* Status Message */}
-              <div style={{
-                textAlign: 'center',
-                padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
-                background: 'rgba(0, 0, 0, 0.5)',
-                borderRadius: '6px',
-                border: '1px solid rgba(0, 191, 255, 0.3)',
-                color: '#87ceeb',
-                fontSize: 'clamp(0.8rem, 1.8vw, 1rem)',
-                marginTop: 'clamp(0.5rem, 1vw, 0.75rem)'
-              }}>
-                {statusMessage}
-              </div>
+              {/* Scanning Animation */}
+              {isScanning && (
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: 'linear-gradient(90deg, transparent, #00bfff, transparent)',
+                  animation: 'scan 2s linear infinite'
+                }} />
+              )}
             </div>
 
-            {/* Recent Scans */}
+            {/* Control Panel */}
             <div style={{
-              flex: '1 1 auto',
-              background: 'rgba(25, 25, 45, 0.75)',
-              borderRadius: '8px',
-              border: '1px solid rgba(0, 191, 255, 0.3)',
-              boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-              padding: 'clamp(0.75rem, 2vw, 1rem)',
               display: 'flex',
-              flexDirection: 'column',
-              minHeight: 0,
-              maxHeight: 'clamp(200px, 35vh, 350px)'
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: 'clamp(1rem, 2vw, 1.5rem)',
+              gap: 'clamp(1rem, 2vw, 1.5rem)'
             }}>
-              <h3 style={{
-                color: '#87ceeb',
-                fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-                margin: '0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0',
-                borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-                paddingBottom: 'clamp(0.15rem, 0.5vw, 0.25rem)'
-              }}>
-                Recent Vehicle Scans
-              </h3>
-              
+              <button
+                onClick={handleStartScan}
+                disabled={isScanning}
+                style={{
+                  flex: 1,
+                  padding: 'clamp(1rem, 2.5vw, 1.5rem)',
+                  background: isScanning ? 'rgba(135, 206, 235, 0.3)' : 'linear-gradient(135deg, #00bfff, #87ceeb)',
+                  color: isScanning ? '#87ceeb' : '#000',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
+                  fontWeight: 'bold',
+                  cursor: isScanning ? 'not-allowed' : 'pointer',
+                  boxShadow: isScanning ? 'none' : '0 0 15px rgba(0, 191, 255, 0.4)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {isScanning ? `SCANNING... ${scanProgress.toFixed(0)}%` : 'INITIATE VEHICLE SCAN'}
+              </button>
+
               <div style={{
-                flex: '1 1 auto',
-                overflowY: 'auto',
-                overflowX: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 'clamp(0.25rem, 0.8vw, 0.5rem)',
-                minHeight: 0,
-                maxHeight: '100%',
-                paddingRight: '0.25rem'
+                flex: 2,
+                textAlign: 'center',
+                padding: 'clamp(0.75rem, 2vw, 1rem)',
+                background: 'rgba(0, 0, 0, 0.6)',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 191, 255, 0.3)'
               }}>
-                {recentScans.map((scan, index) => (
-                  <div key={scan.id} style={{
-                    background: 'rgba(40, 40, 80, 0.6)',
-                    borderRadius: '6px',
-                    border: `1px solid ${getStatusColor(scan.status)}40`,
-                    padding: 'clamp(0.5rem, 1.5vw, 0.75rem)',
-                    fontSize: 'clamp(0.7rem, 1.4vw, 0.8rem)'
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '0.25rem'
-                    }}>
-                      <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>{scan.id}</span>
-                      <span style={{ color: getStatusColor(scan.status), fontWeight: 'bold' }}>
-                        {scan.status}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.15rem' }}>
-                      <span style={{ color: '#87ceeb' }}>Time:</span>
-                      <span style={{ color: '#e0e0e0' }}>{scan.time}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.15rem' }}>
-                      <span style={{ color: '#87ceeb' }}>Plate:</span>
-                      <span style={{ color: '#00bfff', fontWeight: 'bold' }}>{scan.plate}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.15rem' }}>
-                      <span style={{ color: '#87ceeb' }}>Driver:</span>
-                      <span style={{ color: '#e0e0e0' }}>{scan.driver}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#87ceeb' }}>Access:</span>
-                      <span style={{
-                        color: getClearanceColor(scan.clearance),
-                        fontSize: 'clamp(0.65rem, 1.3vw, 0.75rem)',
-                        fontWeight: 'bold'
-                      }}>
-                        {scan.clearance}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                <div style={{
+                  color: '#87ceeb',
+                  fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
+                  fontWeight: 'bold'
+                }}>
+                  {statusMessage}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Panel - Vehicle Details */}
+          {/* Top Right - Vehicle Information */}
           <div style={{
-            flex: '0 0 60%',
+            background: 'rgba(25, 25, 45, 0.75)',
+            borderRadius: '12px',
+            border: '1px solid rgba(0, 191, 255, 0.3)',
+            boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+            padding: 'clamp(1rem, 2.5vw, 1.5rem)',
             display: 'flex',
-            flexDirection: 'column',
-            gap: 'clamp(0.5rem, 1vw, 0.75rem)',
-            overflowY: 'auto',
-            marginRight: 'clamp(0.25rem, 1vw, 0.75rem)'
+            flexDirection: 'column'
           }}>
-            {/* Vehicle Information */}
-            <div style={{
-              background: 'rgba(25, 25, 45, 0.75)',
-              borderRadius: '8px',
-              border: '1px solid rgba(0, 191, 255, 0.3)',
-              boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-              padding: 'clamp(0.75rem, 2vw, 1rem)'
+            <h3 style={{
+              color: '#87ceeb',
+              fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
+              margin: '0 0 clamp(1rem, 2vw, 1.5rem) 0',
+              borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
+              paddingBottom: 'clamp(0.5rem, 1vw, 0.75rem)',
+              textAlign: 'center'
             }}>
-              <h3 style={{
-                color: '#87ceeb',
-                fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
-                margin: '0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0',
-                borderBottom: '2px solid rgba(0, 191, 255, 0.4)',
-                paddingBottom: 'clamp(0.15rem, 0.5vw, 0.25rem)',
+              VEHICLE DETAILS
+            </h3>
+
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(0.75rem, 1.5vw, 1rem)',
+              fontSize: 'clamp(0.8rem, 1.6vw, 0.95rem)'
+            }}>
+              <div style={{
+                background: 'rgba(40, 40, 80, 0.6)',
+                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 191, 255, 0.2)'
+              }}>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>License Plate</div>
+                <div style={{ color: '#00bfff', fontSize: '1.2em', fontWeight: 'bold' }}>{vehicleData.plateNumber}</div>
+                <div style={{ color: '#00ff00', fontSize: '0.9em' }}>Confidence: {vehicleData.plateConfidence.toFixed(1)}%</div>
+              </div>
+
+              <div style={{
+                background: 'rgba(40, 40, 80, 0.6)',
+                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 191, 255, 0.2)'
+              }}>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Vehicle Info</div>
+                <div style={{ color: '#e0e0e0' }}>{vehicleData.year} {vehicleData.make} {vehicleData.model}</div>
+                <div style={{ color: '#e0e0e0' }}>{vehicleData.vehicleType} - {vehicleData.color}</div>
+              </div>
+
+              <div style={{
+                background: 'rgba(40, 40, 80, 0.6)',
+                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 191, 255, 0.2)'
+              }}>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Owner</div>
+                <div style={{ color: '#e0e0e0' }}>{vehicleData.owner}</div>
+                <div style={{ color: '#00bfff' }}>{vehicleData.icNumber}</div>
+              </div>
+
+              <div style={{
+                background: 'rgba(40, 40, 80, 0.6)',
+                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 191, 255, 0.2)'
+              }}>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Security Status</div>
+                <div style={{ 
+                  color: getStatusColor(vehicleData.securityClearance), 
+                  fontWeight: 'bold',
+                  fontSize: '1.1em'
+                }}>
+                  {vehicleData.securityClearance}
+                </div>
+                <div style={{ color: getStatusColor(vehicleData.accessLevel) }}>{vehicleData.accessLevel}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Left - System Statistics */}
+          <div style={{
+            background: 'rgba(25, 25, 45, 0.75)',
+            borderRadius: '12px',
+            border: '1px solid rgba(0, 191, 255, 0.3)',
+            boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+            padding: 'clamp(1rem, 2.5vw, 1.5rem)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <h3 style={{
+              color: '#87ceeb',
+              fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
+              margin: '0 0 clamp(1rem, 2vw, 1.5rem) 0',
+              borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
+              paddingBottom: 'clamp(0.5rem, 1vw, 0.75rem)',
+              textAlign: 'center'
+            }}>
+              TODAY'S STATISTICS
+            </h3>
+
+            <div style={{
+              flex: 1,
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 'clamp(0.5rem, 1vw, 0.75rem)',
+              fontSize: 'clamp(0.7rem, 1.4vw, 0.85rem)'
+            }}>
+              <div style={{
+                background: 'rgba(0, 255, 0, 0.1)',
+                padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+                borderRadius: '6px',
+                border: '1px solid rgba(0, 255, 0, 0.3)',
                 textAlign: 'center'
               }}>
-                Vehicle Information
-              </h3>
-              
+                <div style={{ color: '#00ff00', fontWeight: 'bold', fontSize: '1.5em' }}>{scanStats.authorized}</div>
+                <div style={{ color: '#87ceeb' }}>Authorized</div>
+              </div>
+
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr 1fr',
-                gap: 'clamp(0.5rem, 1.5vw, 0.75rem)',
-                fontSize: 'clamp(0.7rem, 1.5vw, 0.85rem)'
+                background: 'rgba(255, 68, 68, 0.1)',
+                padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 68, 68, 0.3)',
+                textAlign: 'center'
               }}>
-                <div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>License Plate:</span>
-                    <div style={{ color: '#00bfff', marginTop: '0.15rem', fontWeight: 'bold', fontSize: '1.1em' }}>
-                      {currentVehicle.vehicle.licensePlate}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>State:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.vehicle.state}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Vehicle Type:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.vehicle.vehicleType}</div>
-                  </div>
-                </div>
-                <div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Make & Model:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>
-                      {currentVehicle.vehicle.make} {currentVehicle.vehicle.model}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Year:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.vehicle.year}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Color:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.vehicle.color}</div>
-                  </div>
-                </div>
-                <div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Engine:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.vehicle.engineCapacity}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Fuel Type:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.vehicle.fuelType}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Confidence:</span>
-                    <div style={{ color: '#00ff00', marginTop: '0.15rem', fontWeight: 'bold' }}>
-                      {currentVehicle.confidence.toFixed(1)}%
-                    </div>
-                  </div>
-                </div>
+                <div style={{ color: '#ff4444', fontWeight: 'bold', fontSize: '1.5em' }}>{scanStats.denied}</div>
+                <div style={{ color: '#87ceeb' }}>Denied</div>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 165, 0, 0.1)',
+                padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 165, 0, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{ color: '#ffa500', fontWeight: 'bold', fontSize: '1.5em' }}>{scanStats.pending}</div>
+                <div style={{ color: '#87ceeb' }}>Pending</div>
+              </div>
+
+              <div style={{
+                background: 'rgba(0, 191, 255, 0.1)',
+                padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+                borderRadius: '6px',
+                border: '1px solid rgba(0, 191, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{ color: '#00bfff', fontWeight: 'bold', fontSize: '1.5em' }}>{scanStats.todayScans}</div>
+                <div style={{ color: '#87ceeb' }}>Total Scans</div>
               </div>
             </div>
 
-            {/* Registration & Driver Information */}
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 'clamp(0.5rem, 1.5vw, 1rem)'
+              marginTop: 'clamp(0.75rem, 1.5vw, 1rem)',
+              padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+              background: 'rgba(40, 40, 80, 0.6)',
+              borderRadius: '6px',
+              fontSize: 'clamp(0.7rem, 1.4vw, 0.8rem)'
             }}>
-              {/* Registration Details */}
-              <div style={{
-                background: 'rgba(25, 25, 45, 0.75)',
-                borderRadius: '8px',
-                border: '1px solid rgba(0, 191, 255, 0.3)',
-                boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-                padding: 'clamp(0.75rem, 2vw, 1rem)'
-              }}>
-                <h4 style={{
-                  color: '#87ceeb',
-                  fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-                  margin: '0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0',
-                  borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-                  paddingBottom: 'clamp(0.15rem, 0.5vw, 0.25rem)'
-                }}>
-                  Registration Details
-                </h4>
-                
-                <div style={{ fontSize: 'clamp(0.7rem, 1.4vw, 0.8rem)' }}>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Owner:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.registration.registeredOwner}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Registration Date:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.registration.registrationDate}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Expiry Date:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.registration.expiryDate}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Road Tax Expiry:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.registration.roadTaxExpiry}</div>
-                  </div>
-                  <div>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Insurance:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.registration.insuranceCompany}</div>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.1rem', fontSize: '0.9em' }}>
-                      Expires: {currentVehicle.registration.insuranceExpiry}
-                    </div>
-                  </div>
-                </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                <span style={{ color: '#87ceeb' }}>Avg Scan Time:</span>
+                <span style={{ color: '#00ff00' }}>{scanStats.avgScanTime}</span>
               </div>
-
-              {/* Driver Information */}
-              <div style={{
-                background: 'rgba(25, 25, 45, 0.75)',
-                borderRadius: '8px',
-                border: '1px solid rgba(0, 191, 255, 0.3)',
-                boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-                padding: 'clamp(0.75rem, 2vw, 1rem)'
-              }}>
-                <h4 style={{
-                  color: '#87ceeb',
-                  fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-                  margin: '0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0',
-                  borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-                  paddingBottom: 'clamp(0.15rem, 0.5vw, 0.25rem)'
-                }}>
-                  Driver Information
-                </h4>
-                
-                <div style={{ fontSize: 'clamp(0.7rem, 1.4vw, 0.8rem)' }}>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Full Name:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.driver.fullName}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>IC Number:</span>
-                    <div style={{ color: '#00bfff', marginTop: '0.15rem', fontWeight: 'bold' }}>{currentVehicle.driver.icNumber}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>License Number:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.driver.licenseNumber}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>License Class:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.driver.licenseClass}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>License Expiry:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.driver.licenseExpiry}</div>
-                  </div>
-                  <div>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Phone:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.driver.phoneNumber}</div>
-                  </div>
-                </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#87ceeb' }}>System Uptime:</span>
+                <span style={{ color: '#00ff00' }}>{scanStats.systemUptime}</span>
               </div>
             </div>
+          </div>
 
-            {/* Security & Inspection Information */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 'clamp(0.5rem, 1.5vw, 1rem)'
+          {/* Bottom Middle - Access Control */}
+          <div style={{
+            background: 'rgba(25, 25, 45, 0.75)',
+            borderRadius: '12px',
+            border: '1px solid rgba(0, 191, 255, 0.3)',
+            boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+            padding: 'clamp(1rem, 2.5vw, 1.5rem)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <h3 style={{
+              color: '#87ceeb',
+              fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
+              margin: '0 0 clamp(1rem, 2vw, 1.5rem) 0',
+              borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
+              paddingBottom: 'clamp(0.5rem, 1vw, 0.75rem)',
+              textAlign: 'center'
             }}>
-              {/* Security Clearance */}
+              ACCESS CONTROL
+            </h3>
+
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(0.75rem, 1.5vw, 1rem)',
+              fontSize: 'clamp(0.7rem, 1.4vw, 0.85rem)'
+            }}>
               <div style={{
-                background: 'rgba(25, 25, 45, 0.75)',
+                background: 'rgba(40, 40, 80, 0.6)',
+                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
                 borderRadius: '8px',
-                border: '1px solid rgba(0, 191, 255, 0.3)',
-                boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-                padding: 'clamp(0.75rem, 2vw, 1rem)'
+                border: '1px solid rgba(0, 191, 255, 0.2)'
               }}>
-                <h4 style={{
-                  color: '#87ceeb',
-                  fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-                  margin: '0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0',
-                  borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-                  paddingBottom: 'clamp(0.15rem, 0.5vw, 0.25rem)'
-                }}>
-                  Security Clearance
-                </h4>
-                
-                <div style={{ fontSize: 'clamp(0.7rem, 1.4vw, 0.8rem)' }}>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Access Level:</span>
-                    <div style={{ color: getStatusColor(currentVehicle.security.clearanceLevel), marginTop: '0.15rem', fontWeight: 'bold' }}>
-                      {currentVehicle.security.clearanceLevel}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Access Type:</span>
-                    <div style={{ color: getClearanceColor(currentVehicle.security.accessType), marginTop: '0.15rem', fontWeight: 'bold' }}>
-                      {currentVehicle.security.accessType}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Department:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.security.department}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Valid Until:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.security.validUntil}</div>
-                  </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Parking Zone:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.security.parkingZone}</div>
-                  </div>
-                  <div>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Entry Count:</span>
-                    <div style={{ color: '#00bfff', marginTop: '0.15rem', fontWeight: 'bold' }}>{currentVehicle.security.entryCount}</div>
-                  </div>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Registration Status</div>
+                <div style={{ color: getStatusColor(vehicleData.registrationStatus), fontWeight: 'bold' }}>
+                  {vehicleData.registrationStatus}
                 </div>
               </div>
 
-              {/* Inspection Status */}
               <div style={{
-                background: 'rgba(25, 25, 45, 0.75)',
+                background: 'rgba(40, 40, 80, 0.6)',
+                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
                 borderRadius: '8px',
-                border: '1px solid rgba(0, 191, 255, 0.3)',
-                boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
-                padding: 'clamp(0.75rem, 2vw, 1rem)'
+                border: '1px solid rgba(0, 191, 255, 0.2)'
               }}>
-                <h4 style={{
-                  color: '#87ceeb',
-                  fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-                  margin: '0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0',
-                  borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
-                  paddingBottom: 'clamp(0.15rem, 0.5vw, 0.25rem)'
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Insurance & Road Tax</div>
+                <div style={{ color: getStatusColor(vehicleData.insuranceStatus) }}>Insurance: {vehicleData.insuranceStatus}</div>
+                <div style={{ color: getStatusColor(vehicleData.roadTaxStatus) }}>Road Tax: {vehicleData.roadTaxStatus}</div>
+              </div>
+
+              <div style={{
+                background: 'rgba(40, 40, 80, 0.6)',
+                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 191, 255, 0.2)'
+              }}>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Access Details</div>
+                <div style={{ color: '#e0e0e0' }}>Zone: {vehicleData.parkingZone}</div>
+                <div style={{ color: '#e0e0e0' }}>Purpose: {vehicleData.purpose}</div>
+                <div style={{ color: '#e0e0e0' }}>Valid Until: {vehicleData.validUntil}</div>
+              </div>
+
+              <div style={{
+                background: 'rgba(40, 40, 80, 0.6)',
+                padding: 'clamp(0.75rem, 1.5vw, 1rem)',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 191, 255, 0.2)'
+              }}>
+                <div style={{ color: '#87ceeb', fontWeight: 'bold', marginBottom: '0.5rem' }}>Entry History</div>
+                <div style={{ color: '#e0e0e0' }}>Last Entry: {vehicleData.lastEntry}</div>
+                <div style={{ color: '#00bfff', fontWeight: 'bold' }}>Total Entries: {vehicleData.entryCount}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Right - Security Alerts */}
+          <div style={{
+            background: 'rgba(25, 25, 45, 0.75)',
+            borderRadius: '12px',
+            border: '1px solid rgba(0, 191, 255, 0.3)',
+            boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+            padding: 'clamp(1rem, 2.5vw, 1.5rem)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <h3 style={{
+              color: '#87ceeb',
+              fontSize: 'clamp(1rem, 2.2vw, 1.3rem)',
+              margin: '0 0 clamp(1rem, 2vw, 1.5rem) 0',
+              borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
+              paddingBottom: 'clamp(0.5rem, 1vw, 0.75rem)',
+              textAlign: 'center'
+            }}>
+              SECURITY ALERTS
+            </h3>
+
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(0.5rem, 1vw, 0.75rem)',
+              overflowY: 'auto',
+              maxHeight: '100%'
+            }}>
+              {alerts.map((alert, index) => (
+                <div key={alert.id} style={{
+                  background: 'rgba(40, 40, 80, 0.6)',
+                  padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+                  borderRadius: '6px',
+                  border: `1px solid ${getAlertColor(alert.level)}40`,
+                  fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)'
                 }}>
-                  Inspection Status
-                </h4>
-                
-                <div style={{ fontSize: 'clamp(0.7rem, 1.4vw, 0.8rem)' }}>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Last Inspection:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.inspection.lastInspection}</div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '0.25rem'
+                  }}>
+                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>{alert.id}</span>
+                    <span style={{
+                      color: getAlertColor(alert.level),
+                      fontWeight: 'bold',
+                      fontSize: '0.9em'
+                    }}>
+                      {alert.level}
+                    </span>
                   </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Status:</span>
-                    <div style={{ color: getStatusColor(currentVehicle.inspection.inspectionStatus), marginTop: '0.15rem', fontWeight: 'bold' }}>
-                      {currentVehicle.inspection.inspectionStatus}
-                    </div>
+                  <div style={{ color: '#e0e0e0', marginBottom: '0.25rem', lineHeight: '1.3' }}>
+                    {alert.message}
                   </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Next Inspection:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.inspection.nextInspection}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9em' }}>
+                    <span style={{ color: '#87ceeb' }}>Time: {alert.time}</span>
+                    <span style={{ color: '#00bfff' }}>Plate: {alert.plate}</span>
                   </div>
-                  <div style={{ marginBottom: 'clamp(0.25rem, 0.8vw, 0.5rem)' }}>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Inspected By:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem' }}>{currentVehicle.inspection.inspectedBy}</div>
-                  </div>
-                  <div>
-                    <span style={{ color: '#87ceeb', fontWeight: 'bold' }}>Notes:</span>
-                    <div style={{ color: '#e0e0e0', marginTop: '0.15rem', lineHeight: '1.3' }}>{currentVehicle.inspection.notes}</div>
+                  <div style={{
+                    marginTop: '0.25rem',
+                    color: alert.status === 'ACTIVE' ? '#ff4444' : alert.status === 'ACKNOWLEDGED' ? '#ffa500' : '#00ff00',
+                    fontWeight: 'bold',
+                    fontSize: '0.85em'
+                  }}>
+                    Status: {alert.status}
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -750,6 +723,18 @@ const VehicleScanner = () => {
           onBackClick={handleBackClick}
         />
       </div>
+
+      <style jsx>{`
+        @keyframes scan {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100vh); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
+        }
+      `}</style>
     </>
   );
 };
