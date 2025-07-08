@@ -501,7 +501,8 @@ const TerminalSecurity = () => {
             display: 'grid',
             gridTemplateColumns: '1fr 1fr 1fr 1fr',
             gap: 'clamp(0.5rem, 1.5vw, 1rem)',
-            overflow: 'hidden'
+            overflowY: 'auto',
+            minHeight: 0
           }}>
             {/* Threat Detection */}
             <div style={{
@@ -510,9 +511,9 @@ const TerminalSecurity = () => {
               border: '1px solid rgba(255, 68, 68, 0.3)',
               boxShadow: '0 0 10px rgba(255, 68, 68, 0.2)',
               padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+              height: '100%',
               display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden'
+              flexDirection: 'column'
             }}>
               <h3 style={{
                 color: '#ff4444',
@@ -527,6 +528,7 @@ const TerminalSecurity = () => {
 
               <div style={{
                 flex: 1,
+                overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 'clamp(0.25rem, 0.5vw, 0.5rem)',
@@ -585,9 +587,9 @@ const TerminalSecurity = () => {
               border: '1px solid rgba(0, 191, 255, 0.3)',
               boxShadow: '0 0 10px rgba(0, 191, 255, 0.2)',
               padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+              height: '100%',
               display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden'
+              flexDirection: 'column'
             }}>
               <h3 style={{
                 color: '#00bfff',
@@ -602,6 +604,7 @@ const TerminalSecurity = () => {
 
               <div style={{
                 flex: 1,
+                overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 'clamp(0.25rem, 0.5vw, 0.5rem)',
@@ -660,9 +663,9 @@ const TerminalSecurity = () => {
               border: '1px solid rgba(0, 255, 0, 0.3)',
               boxShadow: '0 0 10px rgba(0, 255, 0, 0.2)',
               padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+              height: '100%',
               display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden'
+              flexDirection: 'column'
             }}>
               <h3 style={{
                 color: '#00ff00',
@@ -677,6 +680,7 @@ const TerminalSecurity = () => {
 
               <div style={{
                 flex: 1,
+                overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 'clamp(0.25rem, 0.5vw, 0.5rem)',
@@ -735,9 +739,9 @@ const TerminalSecurity = () => {
               border: '1px solid rgba(255, 165, 0, 0.3)',
               boxShadow: '0 0 10px rgba(255, 165, 0, 0.2)',
               padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+              height: '100%',
               display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden'
+              flexDirection: 'column'
             }}>
               <h3 style={{
                 color: '#ffa500',
@@ -752,10 +756,10 @@ const TerminalSecurity = () => {
 
               <div style={{
                 flex: 1,
+                overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 'clamp(0.25rem, 0.5vw, 0.5rem)',
-                overflowY: 'auto',
                 fontSize: 'clamp(0.6rem, 1.1vw, 0.7rem)'
               }}>
                 {detectedThreats.map((threat) => (

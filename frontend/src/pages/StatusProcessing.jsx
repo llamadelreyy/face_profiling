@@ -477,6 +477,8 @@ const StatusProcessing = () => {
           {/* Statistics and Charts */}
           <div style={{
             flex: 1,
+            overflowY: 'auto',
+            minHeight: 0,
             display: 'flex',
             flexDirection: window.innerWidth < 768 ? 'column' : 'row',
             gap: 'clamp(0.25rem, 0.8vw, 0.5rem)'
@@ -484,6 +486,7 @@ const StatusProcessing = () => {
             {/* Left Panel - Overall Statistics */}
             <div style={{
               flex: window.innerWidth < 768 ? '1' : '0 0 clamp(25%, 28vw, 32%)',
+              height: '100%',
               display: 'flex',
               flexDirection: 'column',
               gap: 'clamp(0.25rem, 0.8vw, 0.5rem)',
@@ -587,6 +590,7 @@ const StatusProcessing = () => {
             {/* Center Panel - Hourly Bar Chart */}
             <div style={{
               flex: 1,
+              height: '100%',
               background: 'rgba(25, 25, 45, 0.75)',
               borderRadius: '8px',
               border: '1px solid rgba(0, 191, 255, 0.3)',
@@ -632,6 +636,7 @@ const StatusProcessing = () => {
             {/* Right Panel - Recent Alerts */}
             <div style={{
               flex: window.innerWidth < 768 ? '1' : '0 0 clamp(25%, 28vw, 32%)',
+              height: '100%',
               background: 'rgba(25, 25, 45, 0.75)',
               borderRadius: '8px',
               border: '1px solid rgba(0, 191, 255, 0.3)',

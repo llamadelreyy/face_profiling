@@ -487,7 +487,8 @@ const VehicleScanner = () => {
             gridTemplateColumns: '1fr 1fr 1fr',
             gap: 'clamp(0.5rem, 1.5vw, 1rem)',
             height: '100%',
-            overflow: 'hidden'
+            overflowY: 'auto',
+            minHeight: 0
           }}>
             {/* System Statistics */}
             <div style={{
@@ -496,9 +497,9 @@ const VehicleScanner = () => {
               border: '1px solid rgba(0, 191, 255, 0.3)',
               boxShadow: '0 0 10px rgba(0, 191, 255, 0.2)',
               padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+              height: '100%',
               display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden'
+              flexDirection: 'column'
             }}>
             <h3 style={{
               color: '#87ceeb',
@@ -588,9 +589,9 @@ const VehicleScanner = () => {
             border: '1px solid rgba(0, 191, 255, 0.3)',
             boxShadow: '0 0 10px rgba(0, 191, 255, 0.2)',
             padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+            height: '100%',
             display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden'
+            flexDirection: 'column'
           }}>
             <h3 style={{
               color: '#87ceeb',
@@ -605,11 +606,11 @@ const VehicleScanner = () => {
 
             <div style={{
               flex: 1,
+              overflowY: 'auto',
               display: 'flex',
               flexDirection: 'column',
               gap: 'clamp(0.25rem, 0.5vw, 0.5rem)',
-              fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
-              overflow: 'hidden'
+              fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)'
             }}>
               <div style={{
                 background: 'rgba(40, 40, 80, 0.6)',
@@ -666,9 +667,9 @@ const VehicleScanner = () => {
             border: '1px solid rgba(0, 191, 255, 0.3)',
             boxShadow: '0 0 10px rgba(0, 191, 255, 0.2)',
             padding: 'clamp(0.5rem, 1vw, 0.75rem)',
+            height: '100%',
             display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden'
+            flexDirection: 'column'
           }}>
             <h3 style={{
               color: '#87ceeb',
