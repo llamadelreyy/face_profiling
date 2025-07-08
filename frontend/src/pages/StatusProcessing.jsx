@@ -380,11 +380,12 @@ const StatusProcessing = () => {
                       color: '#e0e0e0'
                     }}>
                       <div style={{
-                        fontSize: '2.5rem',
+                        fontSize: '1.2rem',
                         marginBottom: '0.5rem',
-                        color: getStatusColor(area.status)
+                        color: getStatusColor(area.status),
+                        fontWeight: 'bold'
                       }}>
-                        📦
+                        SCAN
                       </div>
                       <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#00bfff' }}>
                         {area.currentLoad}/{area.maxCapacity}

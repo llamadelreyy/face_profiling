@@ -358,7 +358,7 @@ const BodyScanner = () => {
                   justifyContent: 'center',
                   gap: '0.5rem'
                 }}>
-                  🌡️ Thermal Scanner
+                  THERMAL SCANNER
                 </h3>
 
                 {/* Thermal Display */}

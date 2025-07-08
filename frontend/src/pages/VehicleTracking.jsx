@@ -192,17 +192,17 @@ const VehicleTracking = () => {
       case 'AUTHORIZED':
       case 'VERIFIED':
       case 'CLEARED':
-        return '✓';
+        return 'OK';
       case 'EXPIRED':
       case 'SUSPENDED':
       case 'BLACKLISTED':
       case 'STOLEN':
-        return '✗';
+        return 'FAIL';
       case 'PENDING':
       case 'WARNING':
-        return '⚠';
+        return 'WARN';
       default:
-        return '•';
+        return 'UNK';
     }
   };
 
@@ -247,7 +247,7 @@ const VehicleTracking = () => {
                 textShadow: '0 0 10px rgba(135,206,235,0.6)',
                 textAlign: 'center'
               }}>
-                🚗 Vehicle Scanner
+                VEHICLE SCANNER
               </h2>
 
               {/* Camera Display */}
@@ -377,7 +377,7 @@ const VehicleTracking = () => {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  {isAnalyzing ? 'SCANNING...' : '🔍 SCAN VEHICLE'}
+                  {isAnalyzing ? 'SCANNING...' : 'SCAN VEHICLE'}
                 </button>
               </div>
 
@@ -392,7 +392,7 @@ const VehicleTracking = () => {
                 color: '#87ceeb',
                 fontSize: 'clamp(0.8rem, 1.8vw, 1rem)'
               }}>
-                📡 {statusMessage}
+                {statusMessage}
               </div>
             </div>
           </div>
@@ -424,7 +424,7 @@ const VehicleTracking = () => {
                 alignItems: 'center',
                 gap: '0.5rem'
               }}>
-                🚙 Vehicle Information
+                VEHICLE INFORMATION
               </h2>
 
               <div style={{
@@ -633,7 +633,7 @@ const VehicleTracking = () => {
                 alignItems: 'center',
                 gap: '0.5rem'
               }}>
-                👤 Driver Information
+                DRIVER INFORMATION
               </h2>
 
               <div style={{
@@ -789,7 +789,7 @@ const VehicleTracking = () => {
                 alignItems: 'center',
                 gap: '0.5rem'
               }}>
-                📋 Recent Scan History
+                RECENT SCAN HISTORY
               </h2>
 
               <div style={{

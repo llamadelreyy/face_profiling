@@ -364,7 +364,7 @@ const ArrivalDeparture = () => {
                   margin: 0,
                   textShadow: '0 0 8px rgba(0,191,255,0.5)'
                 }}>
-                  ✈️ ARRIVALS
+                  ARRIVALS
                 </h2>
               </div>
               
@@ -454,7 +454,7 @@ const ArrivalDeparture = () => {
                   margin: 0,
                   textShadow: '0 0 8px rgba(0,191,255,0.5)'
                 }}>
-                  🛫 DEPARTURES
+                  DEPARTURES
                 </h2>
               </div>
               

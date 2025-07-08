@@ -276,11 +276,12 @@ const IntrusionMonitoring = () => {
                       color: '#e0e0e0'
                     }}>
                       <div style={{
-                        fontSize: '3rem',
+                        fontSize: '1.2rem',
                         marginBottom: '0.5rem',
-                        color: getStatusColor(camera.status)
+                        color: getStatusColor(camera.status),
+                        fontWeight: 'bold'
                       }}>
-                        👥
+                        CROWD
                       </div>
                       <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#00bfff' }}>
                         {camera.peopleCount} People

@@ -233,11 +233,12 @@ const AlarmVerification = () => {
                       color: '#e0e0e0'
                     }}>
                       <div style={{
-                        fontSize: '3rem',
+                        fontSize: '1.2rem',
                         marginBottom: '0.5rem',
-                        color: getCameraStatusColor(camera.status)
+                        color: getCameraStatusColor(camera.status),
+                        fontWeight: 'bold'
                       }}>
-                        📹
+                        CAM
                       </div>
                       <div style={{ fontSize: '0.9rem' }}>
                         {camera.status === 'ALARM' ? 'HUMAN DETECTED' : 'MONITORING'}
