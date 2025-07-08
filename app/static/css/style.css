@@ -1,0 +1,477 @@
+/* === Global Styles === */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background-color: #f0f2f5; /* Light grey background */
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Full viewport height */
+    align-items: stretch; /* Stretch items to fill container width */
+}
+
+h1, h2, h3 {
+    color: #1c3a5f; /* Dark blue for headings */
+}
+
+/* === Header === */
+header {
+    background-color: #2c3e50; /* Dark slate blue */
+    color: white;
+    padding: 1.5em 2em; /* Increased padding */
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2em; /* Larger title */
+    font-weight: 700;
+    color: white;
+}
+
+nav {
+    margin-top: 1em;
+}
+
+nav a {
+    color: #ecf0f1; /* Light grey for nav links */
+    margin: 0 18px;
+    text-decoration: none;
+    font-weight: 400; /* Regular weight */
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+nav a:hover, nav a.active {
+    color: #3498db; /* Bright blue on hover/active */
+    text-decoration: none;
+}
+
+/* === Main Content === */
+main {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2em auto; /* More margin top/bottom */
+    padding: 2em;
+    background-color: #ffffff; /* White background for content */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Softer, larger shadow */
+    border-radius: 8px; /* Rounded corners */
+    flex-grow: 1;
+}
+
+section {
+    margin-bottom: 2.5em; /* More space between sections */
+    padding: 1.5em;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #f9f9f9; /* Slight off-white for sections */
+}
+
+section h2 {
+    margin-top: 0;
+    font-size: 1.8em;
+    border-bottom: 2px solid #3498db; /* Blue accent line */
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+}
+
+/* === Camera Section === */
+#camera-section .camera-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Space between video and button */
+}
+
+#cameraFeed {
+    border: 3px solid #bdc3c7; /* Grey border */
+    border-radius: 6px;
+    width: 100%;
+    max-width: 640px;
+    height: auto; /* Maintain aspect ratio */
+    background-color: #000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#captureButton {
+    padding: 12px 25px;
+    background-color: #2ecc71; /* Emerald green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#captureButton:hover {
+    background-color: #27ae60; /* Darker emerald */
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+#statusMessages {
+    margin-top: 15px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    background-color: #fdfdfd;
+    border-radius: 4px;
+    min-height: 40px;
+    width: 100%;
+    max-width: 640px; /* Match camera feed max-width */
+    box-sizing: border-box;
+    text-align: center;
+    font-style: italic;
+}
+
+/* === Results Section === */
+#results-section {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column */
+    gap: 2em;
+}
+
+/* On larger screens, display side-by-side */
+@media (min-width: 992px) {
+    #results-section {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+#similarFacesResults, #cluster-list-container {
+    padding: 1.5em;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #fdfdfd; /* Slightly brighter than section bg */
+}
+
+#similarFacesResults h3, #cluster-list-container h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #2980b9; /* Slightly lighter blue for sub-headings */
+    margin-bottom: 1em;
+}
+
+/* Styling for dynamically added similar faces (placeholder) */
+#similarFacesResults ul {
+    list-style-type: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+#similarFacesResults li {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#similarFacesResults img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+#similarFacesResults p {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0;
+}
+
+/* Styling for dynamically added clusters (placeholder) */
+#cluster-list-container .cluster-list { /* Assuming .cluster-list will be used */
+    list-style-type: none;
+    padding: 0;
+}
+
+#cluster-list-container .cluster-item { /* Assuming .cluster-item will be used */
+    border: 1px solid #ddd;
+    padding: 12px;
+    margin-bottom: 12px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#cluster-list-container .cluster-item strong {
+    color: #0056b3;
+}
+
+#cluster-list-container .cluster-item em {
+    font-size: 0.9em;
+    color: #777;
+    display: block;
+    margin-top: 5px;
+}
+
+
+/* === Footer === */
+footer {
+    text-align: center;
+    margin-top: auto; /* Pushes footer to bottom if content is short */
+    padding: 1.5em;
+    background-color: #2c3e50; /* Same as header */
+    color: #ecf0f1; /* Light grey text */
+    font-size: 0.9em;
+}
+
+footer p {
+    margin: 0;
+}
+
+
+/* === Existing Cluster Page Styles (Review and Integrate/Adjust if needed) === */
+/* The following styles are from the original CSS for cluster management pages.
+   They might need adjustments to fit the new overall theme or can be kept if specific. */
+
+/* Cluster List Styles (from original, might need to be scoped or adjusted) */
+/* .cluster-list from original - now used in #cluster-list-container on index */
+/* .cluster-item from original - now used in #cluster-list-container on index */
+
+/* Note editing styles (from original) */
+.note-edit-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.note-textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.95em;
+}
+
+.save-note-button { /* This is for notes on cluster_detail.html, not index.html */
+    padding: 8px 12px;
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    align-self: flex-start;
+    transition: background-color 0.3s ease;
+}
+
+.save-note-button:hover {
+    background-color: #0056b3; /* Darker blue */
+}
+
+.note-message {
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+/* === Cluster Management Page Specific Styles (clusters.html, cluster_detail.html) === */
+/* These styles are primarily for pages other than index.html but are kept for completeness */
+
+#cluster-trigger, #cluster-list-section, #cluster-detail-section {
+    /* These are section containers on cluster management pages */
+    /* Styles from original CSS are largely fine, but ensure consistency with new section styling */
+    margin-bottom: 2.5em; /* Consistent with new section spacing */
+    padding: 1.5em; /* Consistent with new section padding */
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+
+#cluster-trigger h2, #cluster-list-section h2, #cluster-detail-section h2 {
+    /* These are headings within sections on cluster management pages */
+    /* Consistent with new section h2 styling */
+    margin-top: 0;
+    font-size: 1.8em;
+    color: #1c3a5f;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+}
+
+#triggerClusteringBtn {
+    padding: 12px 25px;
+    background-color: #e67e22; /* Carrot orange for trigger */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 700;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#triggerClusteringBtn:hover {
+    background-color: #d35400; /* Darker orange */
+    transform: translateY(-2px);
+}
+
+#clusteringStatus {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #2980b9;
+}
+
+/* Cluster List on clusters.html */
+.cluster-list-page .cluster-list { /* Scoping for clusters.html specifically if needed */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Slightly smaller min for cards */
+    gap: 20px;
+    padding: 0;
+    list-style-type: none;
+}
+
+.cluster-list-page .cluster-item { /* Scoping for clusters.html */
+    border: 1px solid #d1d5da; /* GitHub-like border */
+    padding: 18px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s ease;
+}
+
+.cluster-list-page .cluster-item:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.cluster-list-page .cluster-item h4 {
+    margin-top: 0;
+    margin-bottom: 0.75em;
+    color: #0366d6; /* GitHub link blue */
+    font-size: 1.25em;
+}
+
+.representative-image { /* Used on clusters.html cards */
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #e1e4e8; /* GitHub image border */
+    margin-bottom: 12px;
+    border-radius: 4px;
+}
+
+.cluster-list-page .cluster-item p {
+    font-size: 0.9em;
+    margin-bottom: 10px;
+    color: #586069; /* GitHub text color */
+    flex-grow: 1; /* Allow text to take space before link */
+}
+
+.cluster-list-page .cluster-item a.view-details-link {
+    display: inline-block;
+    margin-top: auto;
+    padding: 9px 16px;
+    background-color: #2ea44f; /* GitHub green */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.cluster-list-page .cluster-item a.view-details-link:hover {
+    background-color: #22863a; /* Darker GitHub green */
+}
+
+/* Cluster Detail Page (cluster_detail.html) */
+#clusterIdTitle {
+    color: #1c3a5f; /* Consistent with other h2s */
+}
+
+.image-grid { /* For member images on cluster_detail.html */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Smaller images */
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.member-image {
+    width: 100%;
+    height: auto;
+    border: 1px solid #d1d5da;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+#clusterNotesSection h3 {
+    color: #1c3a5f;
+    font-size: 1.4em;
+    margin-bottom: 0.75em;
+}
+
+#clusterNotesText { /* Display of existing notes */
+    background-color: #f6f8fa; /* GitHub-like background */
+    padding: 12px;
+    border: 1px solid #e1e4e8;
+    border-radius: 4px;
+    min-height: 60px;
+    margin-bottom: 15px;
+    white-space: pre-wrap;
+    font-size: 0.95em;
+    color: #24292e; /* GitHub text */
+}
+
+#noteTextarea { /* Textarea for editing notes */
+    width: 100%;
+    min-height: 120px;
+    padding: 10px;
+    border: 1px solid #d1d5da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    font-family: inherit;
+    font-size: 1em;
+    background-color: #fff;
+    color: #24292e;
+}
+#noteTextarea:focus {
+    border-color: #0366d6;
+    box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.3);
+    outline: none;
+}
+
+
+#saveNoteBtn, #deleteNoteBtn {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    margin-right: 10px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#saveNoteBtn {
+    background-color: #2ea44f; /* GitHub green */
+}
+#saveNoteBtn:hover {
+    background-color: #22863a;
+}
+
+#deleteNoteBtn {
+    background-color: #d73a49; /* GitHub red */
+}
+#deleteNoteBtn:hover {
+    background-color: #cb2431;
+}
+
+#noteStatus {
+    margin-top: 12px;
+    font-weight: 500; /* Slightly bolder */
+    font-size: 0.95em;
+}

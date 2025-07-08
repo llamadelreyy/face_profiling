@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cluster Detail</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Cluster Detail</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/clusters">Manage Clusters</a>
+        </nav>
+    </header>
+    <main>
+        <section id="cluster-detail-section">
+            <h2 id="clusterIdTitle">Cluster ID: </h2>
+            <div id="clusterImagesContainer" class="image-grid">
+                <!-- Member images will be loaded here -->
+            </div>
+            <div id="clusterDetailsEditSection">
+                <h3>Cluster Details:</h3>
+                
+                <div>
+                    <label for="noteTextarea">Notes:</label>
+                    <textarea id="noteTextarea" placeholder="Enter notes here..."></textarea>
+                </div>
+                
+                <div>
+                    <label for="passportNoInput">Passport No:</label>
+                    <input type="text" id="passportNoInput" placeholder="Passport Number">
+                </div>
+                
+                <div>
+                    <label for="visaInput">Visa:</label>
+                    <input type="text" id="visaInput" placeholder="Visa Information">
+                </div>
+
+                <div>
+                    <label for="expiryInput">Expiry Date:</label>
+                    <input type="text" id="expiryInput" placeholder="YYYY-MM-DD">
+                </div>
+
+                <div>
+                    <label for="disembarkationInput">Disembarkation:</label>
+                    <input type="text" id="disembarkationInput" placeholder="Disembarkation Point">
+                </div>
+
+                <div>
+                    <label for="airlineInput">Airline:</label>
+                    <input type="text" id="airlineInput" placeholder="Airline">
+                </div>
+
+                <div>
+                    <label for="destinationInput">Destination:</label>
+                    <input type="text" id="destinationInput" placeholder="Final Destination">
+                </div>
+
+                <div>
+                    <label for="embarkationInput">Embarkation:</label>
+                    <input type="text" id="embarkationInput" placeholder="Embarkation Point">
+                </div>
+
+                <div>
+                    <label for="seatNoInput">Seat No:</label>
+                    <input type="text" id="seatNoInput" placeholder="Seat Number">
+                </div>
+
+                <div>
+                    <label for="lastEntryInput">Last Entry Date:</label>
+                    <input type="text" id="lastEntryInput" placeholder="YYYY-MM-DD">
+                </div>
+                
+                <button id="saveDetailsBtn">Save Details</button>
+                <p id="detailsStatus"></p>
+                <!-- The old clusterNotesText can be removed or repurposed if needed, for now, notes are in textarea -->
+                <p id="clusterNotesText" style="display:none;">Loading notes...</p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Face Profiling App</p>
+    </footer>
+    <script>
+        // Extract cluster_id from the URL path or passed by the template
+        const pathParts = window.location.pathname.split('/');
+        const clusterId = pathParts[pathParts.length - 1];
+        document.getElementById('clusterIdTitle').textContent += clusterId;
+    </script>
+    <script src="/static/js/clusters.js"></script> 
+</body>
+</html>

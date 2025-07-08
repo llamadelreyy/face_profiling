@@ -1,0 +1,105 @@
+/* Bottom Panel Styles */
+.bottom-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(25, 25, 45, 0.95);
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 2px solid rgba(0, 191, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+}
+
+.back-button {
+  background-color: rgba(25, 25, 45, 0.9);
+  color: #e0e0e0;
+  border: 1px solid rgba(0, 191, 255, 0.4);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+}
+
+.back-button:hover {
+  background-color: rgba(0, 191, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.station-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.station-btn {
+  background-color: rgba(25, 25, 45, 0.9);
+  color: #e0e0e0;
+  border: 1px solid rgba(0, 191, 255, 0.4);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+  min-width: 60px;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+}
+
+.station-btn:hover {
+  background-color: rgba(0, 191, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.station-btn.active {
+  background-color: rgba(0, 191, 255, 0.2);
+  border-color: #00bfff;
+  color: #00bfff;
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+}
+
+.station-btn.active:hover {
+  background-color: rgba(0, 191, 255, 0.3);
+}
+
+.right-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.control-panel-btn {
+  background-color: rgba(25, 25, 45, 0.9);
+  color: #e0e0e0;
+  border: 1px solid rgba(0, 191, 255, 0.4);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+}
+
+.control-panel-btn:hover {
+  background-color: rgba(0, 191, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-main-text {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.btn-sub-text {
+  font-size: 12px;
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Clusters</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Cluster Management</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/clusters">Manage Clusters</a>
+        </nav>
+    </header>
+    <main>
+        <section id="cluster-trigger">
+            <h2>Trigger Clustering</h2>
+            <button id="triggerClusteringBtn">Run Clustering Algorithm</button>
+            <p id="clusteringStatus"></p>
+        </section>
+
+        <section id="candidate-clusters-section" style="display: none;">
+            <h2>New Candidate Clusters</h2>
+            <div id="candidateClustersContainer" class="candidate-cluster-list">
+                <!-- Candidate clusters will be loaded here by JavaScript -->
+            </div>
+            <button id="finishReviewingCandidatesBtn" style="margin-top: 10px;">Done Reviewing</button>
+            <p id="candidateStatus"></p>
+        </section>
+
+        <section id="cluster-list-section">
+            <h2>Cluster List</h2>
+            <div id="clusterListContainer" class="cluster-list">
+                <!-- Clusters will be loaded here by JavaScript -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Face Profiling App</p>
+    </footer>
+    <script src="/static/js/clusters.js"></script> 
+</body>
+</html>

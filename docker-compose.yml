@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  airport-security:
+    build: .
+    ports:
+      - "7777:7777"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./cert:/app/cert
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - airport-network
+
+  # Optional: Add a database service if needed
+  # postgres:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_DB: airport_security
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: secure_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - airport-network
+
+networks:
+  airport-network:
+    driver: bridge
+
+# volumes:
+#   postgres_data:

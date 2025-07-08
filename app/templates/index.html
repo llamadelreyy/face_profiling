@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Recognition System - Horizontal Skin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e; /* Original dark blue background */
+            color: #e0e0e0; /* Original light grey text */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            background-color: rgba(20, 20, 40, 0.85);
+            border: 1px solid rgba(0, 191, 255, 0.6);
+            padding-bottom: 88px; /* Add padding for footer space */
+        }
+
+        .header-container {
+            background-color: rgba(25, 25, 45, 0.95);
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            border-bottom: 2px solid rgba(0, 191, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+        }
+
+        .header-logo {
+            max-height: 60px;
+            width: auto;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            color: #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: bold;
+            margin: 0;
+            flex-grow: 1;
+            text-shadow: 0 0 12px #00bfff, 0 0 20px rgba(0,191,255,0.5);
+        }
+
+        h1 {
+            color: #00bfff; /* Deep sky blue */
+            text-transform: uppercase;
+            letter-spacing: 2.5px; /* Slightly more spacing */
+            margin-bottom: 25px;
+            font-size: 2.8em; /* Larger title */
+            text-shadow: 0 0 12px #00bfff, 0 0 20px rgba(0,191,255,0.5); /* Enhanced shadow */
+        }
+
+        h2 {
+            color: #87ceeb; /* Sky blue */
+            font-size: clamp(1.2rem, 3vw, 1.8rem); /* Responsive section titles */
+            margin-top: 0;
+            margin-bottom: 1vh;
+            border-bottom: 2px solid rgba(0, 191, 255, 0.4); /* Thicker border */
+            padding-bottom: 0.5vh;
+            text-shadow: 0 0 8px rgba(135,206,235,0.5);
+            flex-shrink: 0;
+        }
+
+        h3 {
+            color: #00bfff;
+            font-size: clamp(1rem, 2.5vw, 1.4rem); /* Responsive sub-section titles */
+            margin-top: 1vh;
+            margin-bottom: 1vh;
+            flex-shrink: 0;
+        }
+
+        p {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            line-height: 1.4; /* Reduced line spacing for compactness */
+            margin-bottom: 1vh;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 1vh 2vw; /* Responsive button padding */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: clamp(0.9rem, 2vw, 1.1rem); /* Responsive font size */
+            font-weight: bold;
+            border-radius: 8px; /* More rounded */
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+            margin: 0.5vh 0.5vw;
+            box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 0 18px rgba(0, 123, 255, 0.9);
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+        .btn:active {
+            transform: translateY(0px); /* Press down effect */
+        }
+
+        .container::before, .container::after {
+            content: '';
+            position: absolute;
+            width: 60px; /* Larger decorative corners */
+            height: 60px;
+            border: 4px solid #00bfff; /* Thicker border for corners */
+            opacity: 0.8;
+            z-index: 0; 
+        }
+
+        .container::before {
+            top: -20px; /* Adjust position */
+            left: -20px;
+            border-right: none;
+            border-bottom: none;
+            border-top-left-radius: 15px;
+        }
+
+        .container::after {
+            bottom: -20px; /* Adjust position */
+            right: -20px;
+            border-left: none;
+            border-top: none;
+            border-bottom-right-radius: 15px;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                transparent,
+                transparent 2px,
+                rgba(0, 191, 255, 0.03) 2px, /* Subtler scanlines */
+                rgba(0, 191, 255, 0.03) 4px
+            );
+            z-index: -1;
+        }
+
+        /* Main layout for camera and results sections */
+        .main-content-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Panel - Control Section */
+        #camera-section {
+            width: clamp(280px, 25vw, 350px);
+            padding: 1vw;
+            display: flex;
+            flex-direction: column;
+            gap: 1vh;
+            flex-shrink: 0;
+            background: none;
+            border: none;
+            box-shadow: none;
+            height: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        
+        /* Main Display - Results Section */
+        #results-section-wrapper {
+            flex: 1;
+            padding: clamp(8px, 1.5vw, 24px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        /* User Section */
+        .user-section {
+            background-color: rgba(25, 25, 45, 0.75);
+            padding: clamp(8px, 1vw, 16px);
+            border-radius: 8px;
+            color: #e0e0e0;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+            flex-shrink: 0;
+            height: clamp(60px, 8vh, 100px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .user-label {
+            font-size: 14px;
+            color: #87ceeb;
+            margin-bottom: 4px;
+        }
+
+        .user-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #00bfff;
+            text-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
+        }
+
+        /* Control Buttons Grid */
+        .control-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(4px, 0.5vw, 12px);
+            flex-shrink: 0;
+            height: clamp(80px, 12vh, 140px);
+        }
+
+        .control-btn {
+            background-color: transparent;
+            border: 1px solid rgba(0, 191, 255, 0.4);
+            padding: clamp(6px, 1vw, 16px);
+            border-radius: 8px;
+            color: #e0e0e0;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(3px, 0.5vh, 8px);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .control-btn:hover {
+            background-color: rgba(0, 191, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .control-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-icon {
+            background-color: #00bfff;
+        }
+
+        .record-icon {
+            background-color: #00bfff;
+        }
+
+        .stop-icon {
+            background-color: #00bfff;
+            border-radius: 4px;
+        }
+
+        .btn-text-main {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .btn-text-sub {
+            font-size: 10px;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+
+        .control-btn:disabled:hover {
+            background-color: transparent;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.1);
+            transform: none;
+        }
+
+
+        /* Camera Feeds Section */
+        .camera-feeds {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .camera-feed {
+            background-color: rgba(25, 25, 45, 0.75);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(0, 191, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+            flex: 1;
+            min-height: 80px;
+            height: calc((100% - 16px) / 3); /* Equal height for all 3 cameras */
+        }
+
+        .camera-feed-1 {
+            background: rgba(25, 25, 45, 0.75);
+        }
+
+        .camera-feed-2 {
+            background: rgba(25, 25, 45, 0.75);
+        }
+
+        .camera-feed-3 {
+            background: rgba(25, 25, 45, 0.75);
+        }
+
+        .camera-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #000;
+            aspect-ratio: 16/9; /* Maintain proper aspect ratio */
+        }
+
+        .camera-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #00bfff;
+            border: 1px solid rgba(0, 191, 255, 0.5);
+            text-shadow: 0 0 5px rgba(0, 191, 255, 0.5);
+        }
+
+        /* Main Display Area */
+        .main-display {
+            flex: 1;
+            background-color: rgba(25, 25, 45, 0.75);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(0, 191, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
+        }
+
+        .satellite-view {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, rgba(20, 40, 80, 0.9), rgba(30, 50, 90, 0.8), rgba(40, 60, 100, 0.7));
+            position: relative;
+        }
+
+        /* Airport elements */
+        .runway {
+            position: absolute;
+            background-color: #d1d5db;
+            border-radius: 2px;
+            opacity: 0.9;
+        }
+
+        .runway-1 {
+            top: 25%;
+            left: 33%;
+            width: 192px;
+            height: 16px;
+            transform: rotate(12deg);
+        }
+
+        .runway-2 {
+            top: 33%;
+            left: 50%;
+            width: 128px;
+            height: 12px;
+            transform: rotate(-6deg);
+        }
+
+        .runway-3 {
+            top: 50%;
+            left: 25%;
+            width: 160px;
+            height: 12px;
+            transform: rotate(45deg);
+        }
+
+        .terminal {
+            position: absolute;
+            background-color: #9ca3af;
+            border-radius: 4px;
+            opacity: 0.8;
+        }
+
+        .terminal-1 {
+            bottom: 33%;
+            right: 25%;
+            width: 128px;
+            height: 256px;
+        }
+
+        .terminal-2 {
+            top: 50%;
+            right: 33%;
+            width: 96px;
+            height: 192px;
+        }
+
+        .terminal-3 {
+            bottom: 25%;
+            left: 33%;
+            width: 80px;
+            height: 160px;
+        }
+        
+        #statusMessages {
+            margin: 20px auto;
+            color: #ffc107;
+            font-style: italic;
+            font-size: 1.1em;
+            min-height: 25px;
+            background-color: rgba(40,40,60,0.5);
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-align: center;
+            width: fit-content;
+        }
+        
+        #results-section-wrapper h2 { 
+             margin-bottom: 25px;
+        }
+
+        /* Layout within results-section-wrapper (captured image vs similar/clusters) */
+        .results-internal-layout { /* Renamed from results-layout to avoid confusion */
+            display: flex;
+            flex-direction: row;
+            gap: 1vw;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .results-left-column { /* This will hold the captured image */
+            flex: 0 1 25%; /* Smaller proportion for captured image */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 0;
+        }
+        .results-left-column:has(#captured-image-container[style*="display: none"]) {
+            flex-basis: 0; /* Collapse if captured image is hidden */
+            min-width: 0;
+            overflow: hidden; /* Prevent any residual content from showing */
+        }
+        
+        
+        .results-right-column { /* This will hold similar faces and clusters */
+            flex: 1; /* Take remaining space */
+            min-width: 0;
+            display: flex;
+            flex-direction: column; /* Main direction for this column will be vertical */
+            gap: 1vh; /* Gap between rows of info */
+            overflow: hidden;
+        }
+        
+        #captured-image-container, #similarFacesResults, #cluster-list-container {
+            margin-top: 0; /* Adjusted for flex layout */
+            padding: 1vh 1vw; /* Responsive padding */
+            background-color: transparent;
+            border-radius: 10px;
+            text-align: left;
+            border: none;
+            flex: 1; /* Added to make them share space in a row */
+            min-width: 0; /* Allow shrinking */
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        #captured-image-container { /* Specific for captured image if it's alone in its column */
+            flex: 1 1 100%;
+        }
+
+        /* Styling for the new info sections */
+        .info-row {
+            display: flex;
+            flex-direction: row;
+            gap: 1vw; /* Responsive gap between items in a row */
+            width: 100%;
+            flex: 1;
+        }
+
+        .info-group {
+            flex: 1; /* Each group takes equal space in a row */
+            background-color: rgba(25, 25, 45, 0.75);
+            padding: 1vh 1vw; /* Responsive padding */
+            border-radius: 8px;
+            border: 1px solid rgba(0,191,255,0.25);
+            min-width: 0;
+        }
+        
+        .info-group h4 {
+            color: #87ceeb; /* Sky blue */
+            font-size: 1.2em;
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(0,191,255,0.2);
+            padding-bottom: 5px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between; /* Label on left, value on right */
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(70, 70, 100, 0.5); /* Subtle separator */
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-item span:first-child { /* Label */
+            color: #c0c0c0;
+            margin-right: 10px;
+        }
+        .info-item span:last-child { /* Value */
+            color: #e0e0e0;
+            font-weight: bold;
+            text-align: right;
+            flex-grow: 1; /* Allow value to take remaining space */
+            word-break: break-word; /* Prevent long values from breaking layout */
+        }
+
+
+        #similarFacesResults, #cluster-details-display { /* cluster-list-container is replaced/restructured */
+            /* These are now part of a more complex layout */
+             margin-top: 0;
+            padding: 20px;
+            background-color: transparent;
+            border-radius: 10px;
+            text-align: left;
+            border: none;
+            box-sizing: border-box;
+        }
+        #similarFacesResults {
+            flex: 0 0 250px; /* Fixed width for similar faces, adjust as needed */
+            margin-right: 20px; /* Space between similar faces and the details block */
+        }
+        #cluster-details-display {
+            flex: 1; /* Takes remaining space */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between rows of info items */
+        }
+
+
+        #captured-image-container h3, #similarFacesResults h3 { /* Removed #cluster-list-container h3 */
+            text-align: center; 
+            border-bottom: 1px solid rgba(0,191,255,0.2);
+            padding-bottom: 10px;
+            margin-top: 0; 
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Adjusted item size */
+            gap: 15px; /* Adjusted gap */
+            margin-top: 15px;
+        }
+
+        .face-item, .cluster-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            background-color: rgba(25, 25, 45, 0.8);
+            border-radius: 8px;
+            border: 1px solid rgba(0,191,255,0.4);
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .face-item:hover, .cluster-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,191,255,0.3);
+        }
+        
+        .face-item img, .cluster-item img {
+            width: 100px; 
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 2px solid #007bff; 
+        }
+        .face-item p, .cluster-item p {
+            font-size: 0.9em; 
+            margin-bottom: 5px;
+            word-break: break-word;
+            color: #c0c0c0; 
+        }
+        .face-item p strong, .cluster-item p strong {
+            color: #e0e0e0; 
+        }
+        .placeholder-text {
+            color: #888; 
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 1200px) {
+            #camera-section {
+                width: clamp(250px, 30vw, 300px);
+            }
+        }
+
+        @media (max-width: 1024px) { /* Breakpoint for stacking main sections */
+            .main-content-layout {
+                flex-direction: column;
+                gap: 2vh;
+                height: auto;
+            }
+            #camera-section {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .user-section {
+                width: 100%;
+                order: 1;
+            }
+            .control-buttons {
+                width: 100%;
+                order: 2;
+                height: auto;
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .camera-feeds {
+                width: 100%;
+                order: 3;
+                flex-direction: row;
+                height: auto;
+            }
+            .camera-feed {
+                height: clamp(120px, 20vh, 200px);
+            }
+            #results-section-wrapper {
+                flex: 1;
+                width: 100%;
+            }
+            .header-title {
+                font-size: clamp(1.2rem, 5vw, 2rem);
+            }
+        }
+
+        @media (max-width: 768px) { /* Breakpoint for stacking internal results columns */
+            .results-internal-layout {
+                flex-direction: column;
+                gap: 1vh;
+            }
+            .results-left-column, .results-right-column {
+                flex: 1;
+                min-width: 0;
+            }
+            .info-row {
+                flex-direction: column; /* Stack info groups on smaller screens */
+                gap: 1vh;
+            }
+            .header-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                height: auto;
+                padding: clamp(8px, 2vw, 16px);
+            }
+            .header-logo {
+                margin-right: 0;
+                margin-bottom: 1vh;
+            }
+            .header-title {
+                font-size: clamp(1rem, 6vw, 1.8rem);
+            }
+            .camera-feeds {
+                flex-direction: column;
+            }
+            .control-buttons {
+                grid-template-columns: 1fr;
+                gap: 1vh;
+            }
+        }
+
+        @media (max-width: 480px) { /* Mobile breakpoint */
+            .container {
+                padding: 1vh 1vw;
+                margin: 0;
+                width: 100vw;
+                height: 100vh;
+                padding-bottom: clamp(60px, 15vh, 120px);
+            }
+            .header-title {
+                font-size: clamp(0.9rem, 7vw, 1.5rem);
+                letter-spacing: 0.1vw;
+            }
+            .bottom-panel {
+                padding: clamp(8px, 2vw, 16px);
+                flex-direction: column;
+                gap: 1vh;
+                height: auto;
+            }
+            .station-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .station-btn, .back-button, .control-panel-btn {
+                min-width: clamp(60px, 15vw, 80px);
+                padding: clamp(6px, 1.5vw, 12px);
+            }
+        }
+
+        /* Bottom Control Panel */
+        .bottom-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(25, 25, 45, 0.95);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid rgba(0, 191, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+        }
+
+        .back-button {
+            background-color: rgba(25, 25, 45, 0.9);
+            color: #e0e0e0;
+            border: 1px solid rgba(0, 191, 255, 0.4);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+        }
+
+        .back-button:hover {
+            background-color: rgba(0, 191, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .station-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .station-btn {
+            background-color: rgba(25, 25, 45, 0.9);
+            color: #e0e0e0;
+            border: 1px solid rgba(0, 191, 255, 0.4);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+            min-width: 60px;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+        }
+
+        .station-btn:hover {
+            background-color: rgba(0, 191, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .station-btn.active {
+            background-color: rgba(0, 191, 255, 0.2);
+            border-color: #00bfff;
+            color: #00bfff;
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+        }
+
+        .station-btn.active:hover {
+            background-color: rgba(0, 191, 255, 0.3);
+        }
+
+        .right-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-panel-btn {
+            background-color: rgba(25, 25, 45, 0.9);
+            color: #e0e0e0;
+            border: 1px solid rgba(0, 191, 255, 0.4);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+        }
+
+        .control-panel-btn:hover {
+            background-color: rgba(0, 191, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-main-text {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-sub-text {
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-container">
+            <div class="header-logo">
+                <img src="/static/logo.png" alt="Logo" style="max-height: 60px; width: auto;">
+            </div>
+            <h1 class="header-title">FACIAL RECOGNITION SYSTEM</h1>
+        </div>
+        
+        
+        <div class="main-content-layout">
+            <!-- Left Panel -->
+            <section id="camera-section">
+                <!-- User Section -->
+                <div class="user-section">
+                    <div class="user-label">USER</div>
+                    <div class="user-number">07</div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="control-buttons">
+                    <button class="control-btn" id="captureBtn">
+                        <div class="control-icon play-icon">
+                            <div style="width: 0; height: 0; border-left: 8px solid #1a1a2e; border-top: 6px solid transparent; border-bottom: 6px solid transparent; margin-left: 2px;"></div>
+                        </div>
+                        <span class="btn-text-main">CAPTURE</span>
+                        <span class="btn-text-sub">IMAGE</span>
+                    </button>
+                    <button class="control-btn" id="analyzeBtn" disabled>
+                        <div class="control-icon record-icon">
+                            <div style="width: 12px; height: 12px; background-color: #1a1a2e; border-radius: 50%;"></div>
+                        </div>
+                        <span class="btn-text-main">ANALYZE</span>
+                        <span class="btn-text-sub">FACE</span>
+                    </button>
+                    <button class="control-btn" id="clearBtn">
+                        <div class="control-icon stop-icon">
+                            <div style="width: 16px; height: 16px; background-color: #1a1a2e; border-radius: 2px;"></div>
+                        </div>
+                        <span class="btn-text-main">CLEAR</span>
+                        <span class="btn-text-sub">RESULTS</span>
+                    </button>
+                </div>
+
+                <!-- Camera Feeds -->
+                <div class="camera-feeds">
+                    <!-- Camera 1 -->
+                    <div class="camera-feed camera-feed-1">
+                        <video id="video" class="camera-video" autoplay playsinline muted style="display: block;"></video>
+                        <canvas id="canvas" class="camera-video" style="display: none;"></canvas>
+                        <div class="camera-label">CAMERA 1 - FACIAL RECOGNITION</div>
+                    </div>
+
+                    <!-- Camera 2 -->
+                    <div class="camera-feed camera-feed-2">
+                        <div class="camera-video"></div>
+                        <div class="camera-label">CAMERA 2</div>
+                    </div>
+
+                    <!-- Camera 3 -->
+                    <div class="camera-feed camera-feed-3">
+                        <div class="camera-video"></div>
+                        <div class="camera-label">CAMERA 3</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Display - Facial Recognition Results -->
+            <section id="results-section-wrapper">
+                <h2>Analysis Results</h2>
+                <div id="statusMessages">Ready to capture image.</div>
+                
+                <div class="results-internal-layout">
+                    <!-- Left Column - Captured Image -->
+                    <div class="results-left-column">
+                        <div id="captured-image-container" style="display: none;">
+                            <h3>Captured Image</h3>
+                            <img id="captured-image" style="max-width: 100%; height: auto; border-radius: 8px; border: 2px solid #00bfff;">
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column - Analysis Results -->
+                    <div class="results-right-column">
+                        <!-- Similar Faces Results -->
+                        <div id="similarFacesResults">
+                            <h3>Similar Faces</h3>
+                            <div id="results" class="placeholder-text">
+                                No analysis performed yet. Capture an image and click Analyze to begin.
+                            </div>
+                        </div>
+                        
+                        <!-- Face Details Display -->
+                        <div id="cluster-details-display">
+                            <div class="info-row">
+                                <div class="info-group">
+                                    <h4>Detection Info</h4>
+                                    <div class="info-item">
+                                        <span>Faces Detected:</span>
+                                        <span id="faces-count">0</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span>Confidence:</span>
+                                        <span id="confidence-level">N/A</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span>Processing Time:</span>
+                                        <span id="processing-time">N/A</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-group">
+                                    <h4>Match Results</h4>
+                                    <div class="info-item">
+                                        <span>Similar Faces:</span>
+                                        <span id="similar-count">0</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span>Best Match:</span>
+                                        <span id="best-match">N/A</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span>Similarity Score:</span>
+                                        <span id="similarity-score">N/A</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Bottom Control Panel -->
+        <div class="bottom-panel">
+            <!-- Back Button -->
+            <button class="back-button">
+                <span class="btn-main-text">BACK</span>
+                <span class="btn-sub-text">MAIN MENU</span>
+            </button>
+
+            <!-- Station Selection -->
+            <div class="station-controls">
+                <button class="station-btn active" data-station="ALL">
+                    <div class="btn-main-text">SELECT</div>
+                    <div class="btn-sub-text">ALL</div>
+                </button>
+                
+                <button class="station-btn" data-station="01">
+                    <div class="btn-main-text">01</div>
+                    <div class="btn-sub-text">STATION</div>
+                </button>
+                <button class="station-btn" data-station="02">
+                    <div class="btn-main-text">02</div>
+                    <div class="btn-sub-text">STATION</div>
+                </button>
+                <button class="station-btn" data-station="03">
+                    <div class="btn-main-text">03</div>
+                    <div class="btn-sub-text">STATION</div>
+                </button>
+                <button class="station-btn" data-station="04">
+                    <div class="btn-main-text">04</div>
+                    <div class="btn-sub-text">STATION</div>
+                </button>
+                <button class="station-btn" data-station="05">
+                    <div class="btn-main-text">05</div>
+                    <div class="btn-sub-text">STATION</div>
+                </button>
+                <button class="station-btn" data-station="06">
+                    <div class="btn-main-text">06</div>
+                    <div class="btn-sub-text">STATION</div>
+                </button>
+                <button class="station-btn" data-station="07">
+                    <div class="btn-main-text">07</div>
+                    <div class="btn-sub-text">STATION</div>
+                </button>
+            </div>
+
+            <!-- Right Controls -->
+            <div class="right-controls">
+                <button class="control-panel-btn">
+                    <div class="btn-main-text">ADMIN</div>
+                    <div class="btn-sub-text">USER</div>
+                </button>
+                <button class="control-panel-btn">
+                    <div class="btn-main-text">RESULTS</div>
+                </button>
+                <button class="control-panel-btn">
+                    <div class="btn-main-text">PARAMETER</div>
+                    <div class="btn-sub-text">SETUP</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        let video, canvas, context;
+        let analysisStartTime;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize camera for facial recognition
+            initializeCamera();
+            
+            // Station selection functionality
+            const stationButtons = document.querySelectorAll('.station-btn');
+            stationButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    stationButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    const station = button.dataset.station;
+                    console.log('Selected station:', station);
+                    updateStationDisplay(station);
+                });
+            });
+
+            // Facial recognition control buttons
+            const captureBtn = document.getElementById('captureBtn');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            captureBtn.addEventListener('click', captureImage);
+            analyzeBtn.addEventListener('click', analyzeImage);
+            clearBtn.addEventListener('click', clearResults);
+
+            // Back button functionality
+            const backButton = document.querySelector('.back-button');
+            backButton.addEventListener('click', () => {
+                window.location.href = '/';
+            });
+
+            // Control panel buttons
+            const controlPanelButtons = document.querySelectorAll('.control-panel-btn');
+            controlPanelButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const text = button.querySelector('.btn-main-text').textContent;
+                    console.log('Control panel button clicked:', text);
+                    
+                    switch(text) {
+                        case 'ADMIN':
+                            // Navigate to admin panel
+                            break;
+                        case 'RESULTS':
+                            // Navigate to results page
+                            window.location.href = '/clusters';
+                            break;
+                        case 'PARAMETER':
+                            // Navigate to parameter setup
+                            break;
+                    }
+                });
+            });
+        });
+
+        async function initializeCamera() {
+            try {
+                video = document.getElementById('video');
+                canvas = document.getElementById('canvas');
+                context = canvas.getContext('2d');
+
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480 }
+                });
+                video.srcObject = stream;
+                video.play();
+
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                });
+
+                console.log('Camera initialized successfully');
+                document.getElementById('statusMessages').textContent = 'Camera ready. Click CAPTURE to take a photo.';
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                document.getElementById('statusMessages').textContent = 'Camera access denied or not available';
+            }
+        }
+
+        function captureImage() {
+            if (!video || video.readyState !== 4) {
+                alert('Camera not ready. Please wait...');
+                return;
+            }
+
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Show captured image
+            const capturedImageContainer = document.getElementById('captured-image-container');
+            const capturedImage = document.getElementById('captured-image');
+            capturedImage.src = canvas.toDataURL('image/jpeg');
+            capturedImageContainer.style.display = 'block';
+            
+            document.getElementById('statusMessages').textContent = 'Image captured. Click ANALYZE to process.';
+            
+            // Enable analyze button
+            document.getElementById('analyzeBtn').disabled = false;
+        }
+
+        async function analyzeImage() {
+            const canvas = document.getElementById('canvas');
+            const dataURL = canvas.toDataURL('image/jpeg');
+            
+            analysisStartTime = Date.now();
+            document.getElementById('statusMessages').textContent = 'Analyzing image...';
+            document.getElementById('analyzeBtn').disabled = true;
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: dataURL })
+                });
+
+                const result = await response.json();
+                const processingTime = Date.now() - analysisStartTime;
+                
+                if (result.success) {
+                    displayResults(result, processingTime);
+                    document.getElementById('statusMessages').textContent = 'Analysis complete.';
+                } else {
+                    document.getElementById('statusMessages').textContent = result.message || 'Analysis failed.';
+                }
+            } catch (error) {
+                console.error('Error during analysis:', error);
+                document.getElementById('statusMessages').textContent = 'Error during analysis.';
+            }
+
+            document.getElementById('analyzeBtn').disabled = false;
+        }
+
+        function displayResults(result, processingTime) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            // Update info panels
+            document.getElementById('faces-count').textContent = result.faces ? result.faces.length : 0;
+            document.getElementById('processing-time').textContent = `${processingTime}ms`;
+            
+            if (result.faces && result.faces.length > 0) {
+                const firstFace = result.faces[0];
+                document.getElementById('confidence-level').textContent = `${(firstFace.confidence * 100).toFixed(1)}%`;
+                
+                // Display face results
+                result.faces.forEach((face, index) => {
+                    const faceDiv = document.createElement('div');
+                    faceDiv.className = 'face-result';
+                    faceDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background-color: rgba(40,40,80,0.8); border-radius: 8px; border: 1px solid rgba(0,191,255,0.4);';
+                    faceDiv.innerHTML = `
+                        <h4 style="color: #00bfff; margin-top: 0;">Face ${index + 1}</h4>
+                        <p><strong>Confidence:</strong> ${(face.confidence * 100).toFixed(1)}%</p>
+                        <p><strong>Location:</strong> (${face.location.left}, ${face.location.top})</p>
+                        ${face.encoding ? '<p><strong>Encoding:</strong> Generated</p>' : ''}
+                    `;
+                    resultsDiv.appendChild(faceDiv);
+                });
+
+                if (result.similar_faces && result.similar_faces.length > 0) {
+                    document.getElementById('similar-count').textContent = result.similar_faces.length;
+                    
+                    const bestMatch = result.similar_faces[0];
+                    document.getElementById('best-match').textContent = bestMatch.filename;
+                    document.getElementById('similarity-score').textContent = `${(bestMatch.distance * 100).toFixed(1)}%`;
+                    
+                    const similarDiv = document.createElement('div');
+                    similarDiv.className = 'similar-faces';
+                    similarDiv.style.cssText = 'margin-top: 20px; padding: 15px; background-color: rgba(30,30,60,0.9); border-radius: 8px; border: 1px solid rgba(0,191,255,0.3);';
+                    similarDiv.innerHTML = '<h4 style="color: #87ceeb; margin-top: 0;">Similar Faces Found:</h4>';
+                    
+                    result.similar_faces.forEach(similar => {
+                        const similarFaceDiv = document.createElement('div');
+                        similarFaceDiv.style.cssText = 'margin-bottom: 10px; padding: 8px; background-color: rgba(50,50,90,0.7); border-radius: 6px;';
+                        similarFaceDiv.innerHTML = `
+                            <p><strong>Match:</strong> ${similar.filename}</p>
+                            <p><strong>Similarity:</strong> ${(similar.distance * 100).toFixed(1)}%</p>
+                        `;
+                        similarDiv.appendChild(similarFaceDiv);
+                    });
+                    
+                    resultsDiv.appendChild(similarDiv);
+                } else {
+                    document.getElementById('similar-count').textContent = '0';
+                    document.getElementById('best-match').textContent = 'N/A';
+                    document.getElementById('similarity-score').textContent = 'N/A';
+                }
+            } else {
+                resultsDiv.innerHTML = '<p style="color: #888; font-style: italic; text-align: center; padding: 20px;">No faces detected in the image.</p>';
+                document.getElementById('confidence-level').textContent = 'N/A';
+                document.getElementById('similar-count').textContent = '0';
+                document.getElementById('best-match').textContent = 'N/A';
+                document.getElementById('similarity-score').textContent = 'N/A';
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '<div class="placeholder-text">No analysis performed yet. Capture an image and click Analyze to begin.</div>';
+            document.getElementById('statusMessages').textContent = 'Ready to capture image.';
+            
+            // Hide captured image
+            document.getElementById('captured-image-container').style.display = 'none';
+            
+            // Clear canvas
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Reset info panels
+            document.getElementById('faces-count').textContent = '0';
+            document.getElementById('confidence-level').textContent = 'N/A';
+            document.getElementById('processing-time').textContent = 'N/A';
+            document.getElementById('similar-count').textContent = '0';
+            document.getElementById('best-match').textContent = 'N/A';
+            document.getElementById('similarity-score').textContent = 'N/A';
+            
+            // Disable analyze button
+            document.getElementById('analyzeBtn').disabled = true;
+        }
+
+        function updateStationDisplay(station) {
+            if (station === '01' || station === 'ALL') {
+                // Station 1 or ALL - Show facial recognition functionality
+                document.getElementById('statusMessages').textContent = 'Facial Recognition Station - Ready to capture image.';
+            } else {
+                // Other stations - General monitoring mode
+                document.getElementById('statusMessages').textContent = `Monitoring Station ${station} - Surveillance mode active.`;
+            }
+        }
+    </script>
+</body>
+</html>

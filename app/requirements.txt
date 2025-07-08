@@ -1,0 +1,9 @@
+fastapi
+python-multipart
+python-dotenv
+Werkzeug
+SQLAlchemy
+face_recognition
+scikit-learn
+pydantic
+uvicorn

@@ -1,0 +1,67 @@
+/* Analysis Info Styles */
+.cluster-details-display {
+  margin-top: 0;
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 10px;
+  text-align: left;
+  border: none;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex: 1;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1vw;
+  width: 100%;
+  flex: 1;
+}
+
+.info-group {
+  flex: 1;
+  background-color: rgba(25, 25, 45, 0.75);
+  padding: 1vh 1vw;
+  border-radius: 8px;
+  border: 1px solid rgba(0,191,255,0.25);
+  min-width: 0;
+}
+
+.info-group-h4 {
+  color: #87ceeb;
+  font-size: 1.2em;
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(0,191,255,0.2);
+  padding-bottom: 5px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(70, 70, 100, 0.5);
+}
+
+.info-item-last {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: none;
+}
+
+.info-item-label {
+  color: #c0c0c0;
+  margin-right: 10px;
+}
+
+.info-item-value {
+  color: #e0e0e0;
+  font-weight: bold;
+  text-align: right;
+  flex-grow: 1;
+  word-break: break-word;
+}

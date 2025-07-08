@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Recognition System - Skin</title>
+    <link rel="stylesheet" href="/static/css/style.css"> <!-- Added link to main stylesheet -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e; /* Dark blue-ish background */
+            color: #e0e0e0; /* Light grey text */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* justify-content: center; Removed to allow content to flow from top */
+            min-height: 100vh;
+            overflow-y: auto; /* Allow scrolling if content exceeds viewport */
+        }
+
+        .container {
+            background-color: rgba(20, 20, 40, 0.85); /* Slightly darker, semi-transparent dark blue */
+            padding: 30px 40px; /* More horizontal padding */
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.35); /* Enhanced Deep sky blue glow */
+            text-align: center;
+            width: 90%; 
+            max-width: 1100px; /* Increased max-width for more content */
+            border: 1px solid rgba(0, 191, 255, 0.6); /* Stronger border */
+            margin-top: 30px; 
+            margin-bottom: 30px;
+            position: relative; /* For pseudo-elements */
+        }
+
+        h1 {
+            color: #00bfff; /* Deep sky blue */
+            text-transform: uppercase;
+            letter-spacing: 2.5px; /* Slightly more spacing */
+            margin-bottom: 25px; 
+            font-size: 2.8em; /* Larger title */
+            text-shadow: 0 0 12px #00bfff, 0 0 20px rgba(0,191,255,0.5); /* Enhanced shadow */
+        }
+
+        h2 { 
+            color: #87ceeb; /* Sky blue */
+            font-size: 2em; /* Larger section titles */
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 191, 255, 0.4); /* Thicker border */
+            padding-bottom: 10px;
+            text-shadow: 0 0 8px rgba(135,206,235,0.5);
+        }
+
+        h3 { 
+            color: #00bfff;
+            font-size: 1.6em; /* Larger sub-section titles */
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.7; /* More line spacing */
+            margin-bottom: 20px;
+        }
+
+        .btn { 
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 14px 28px; /* Larger buttons */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.1em; /* Larger font in buttons */
+            font-weight: bold;
+            border-radius: 8px; /* More rounded */
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+            margin: 10px 5px; 
+            box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 0 18px rgba(0, 123, 255, 0.9);
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+        .btn:active {
+            transform: translateY(0px); /* Press down effect */
+        }
+
+
+        .container::before, .container::after {
+            content: '';
+            position: absolute;
+            width: 60px; /* Larger decorative corners */
+            height: 60px;
+            border: 4px solid #00bfff; /* Thicker border for corners */
+            opacity: 0.8;
+            z-index: 0; 
+        }
+
+        .container::before {
+            top: -20px; /* Adjust position */
+            left: -20px;
+            border-right: none;
+            border-bottom: none;
+            border-top-left-radius: 15px;
+        }
+
+        .container::after {
+            bottom: -20px; /* Adjust position */
+            right: -20px;
+            border-left: none;
+            border-top: none;
+            border-bottom-right-radius: 15px;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                transparent,
+                transparent 2px,
+                rgba(0, 191, 255, 0.03) 2px, /* Subtler scanlines */
+                rgba(0, 191, 255, 0.03) 4px
+            );
+            z-index: -1;
+        }
+
+        #camera-section, #results-section-wrapper {
+            background-color: rgba(25, 25, 45, 0.75); /* Slightly more opaque */
+            padding: 30px; 
+            border-radius: 12px; /* More rounded sections */
+            margin-top: 30px;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
+        }
+
+        .camera-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px; /* More gap */
+            margin-bottom: 25px;
+        }
+
+        #cameraFeed {
+            width: 100%;
+            max-width: 640px; 
+            height: auto;
+            border-radius: 10px; /* More rounded video */
+            border: 3px solid #00bfff; /* Thicker border for video */
+            background-color: #000;
+            box-shadow: 0 0 15px rgba(0,191,255,0.4);
+        }
+
+        #snapshotCanvas {
+            max-width: 100%;
+            max-height: 480px; 
+            border-radius: 10px;
+            border: 3px solid #00bfff;
+            margin-top: 20px;
+            background-color: #111; /* Slightly lighter black for canvas bg */
+            box-shadow: 0 0 15px rgba(0,191,255,0.4);
+        }
+        
+        #statusMessages {
+            margin-top: 20px;
+            color: #ffc107; 
+            font-style: italic;
+            font-size: 1.1em;
+            min-height: 25px; 
+            background-color: rgba(40,40,60,0.5);
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+        
+        #results-section-wrapper h2 { 
+             margin-bottom: 25px;
+        }
+
+        #captured-image-container, #similarFacesResults, #cluster-list-container {
+            margin-top: 25px;
+            padding: 25px; 
+            background-color: rgba(30, 30, 60, 0.7); /* More opaque result boxes */
+            border-radius: 10px;
+            text-align: left; 
+            border: 1px solid rgba(0,191,255,0.25);
+        }
+        #captured-image-container h3, #similarFacesResults h3, #cluster-list-container h3 {
+            text-align: center; 
+            border-bottom: 1px solid rgba(0,191,255,0.2);
+            padding-bottom: 10px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* Slightly larger items */
+            gap: 20px; /* More gap in grid */
+            margin-top: 15px;
+        }
+
+        .face-item, .cluster-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px; /* More padding in items */
+            background-color: rgba(40,40,80,0.8); /* Darker item background */
+            border-radius: 8px;
+            border: 1px solid rgba(0,191,255,0.4);
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .face-item:hover, .cluster-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,191,255,0.3);
+        }
+        
+        .face-item img, .cluster-item img {
+            width: 110px; /* Larger images */
+            height: 110px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 2px solid #007bff; /* Stronger border on images */
+        }
+        .face-item p, .cluster-item p {
+            font-size: 0.95em; /* Slightly larger text in items */
+            margin-bottom: 5px;
+            word-break: break-word;
+            color: #c0c0c0; /* Lighter text for details */
+        }
+        .face-item p strong, .cluster-item p strong {
+            color: #e0e0e0; /* Emphasize strong text */
+        }
+        .placeholder-text {
+            color: #888; /* Darker placeholder */
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="container">
+        <h1>Facial Recognition System</h1>
+        
+        <section id="camera-section">
+            <h2>Live Feed & Capture</h2>
+            <div class="camera-controls">
+                <video id="cameraFeed" autoplay playsinline muted></video>
+                <button id="captureButton" class="btn">Start Camera & Capture</button>
+            </div>
+            <div id="statusMessages">Initializing camera...</div>
+        </section>
+
+        <section id="results-section-wrapper">
+            <h2>Analysis Results</h2>
+            <div id="captured-image-container" style="display: none;"> 
+                 <h3>Captured Image</h3>
+                 <canvas id="snapshotCanvas"></canvas>
+            </div>
+
+            <div id="similarFacesResults">
+                <h3>Similar Faces Found</h3>
+                <div class="results-grid" id="similarFacesGrid">
+                    <p class="placeholder-text">Capture an image to find similar faces.</p>
+                </div>
+            </div>
+    
+            <div id="cluster-list-container">
+                <h3>Associated Clusters</h3>
+                <div class="results-grid" id="associatedClustersGrid">
+                     <p class="placeholder-text">No associated clusters identified yet.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        // main.js should handle all dynamic content updates,
+        // including camera initialization, snapshot display,
+        // and populating results grids.
+        document.addEventListener('DOMContentLoaded', () => {
+            // Example: if main.js doesn't clear status on its own
+            // const statusMessages = document.getElementById('statusMessages');
+            // if (statusMessages.textContent === 'Initializing camera...') {
+            //     // main.js will likely update this once camera is ready or fails
+            // }
+        });
+    </script>
+</body>
+</html>

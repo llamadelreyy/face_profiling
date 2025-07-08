@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Profiling</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Face Profiling</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/clusters">Manage Clusters</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="camera-section">
+            <h2>Live Feed & Capture</h2>
+            <div class="camera-controls">
+                <video id="cameraFeed" autoplay playsinline></video>
+                <button id="captureButton">Start Camera & Capture</button>
+            </div>
+            <canvas id="snapshotCanvas" style="display:none;"></canvas>
+            <div id="statusMessages"></div>
+        </section>
+
+        <section id="results-section">
+            <div id="similarFacesResults">
+                <h3>Similar Faces Found</h3>
+                <!-- Content will be dynamically added here -->
+            </div>
+    
+            <div id="cluster-list-container">
+                <h3>Associated Clusters</h3>
+                <!-- Cluster items will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Face Profiling App. All rights reserved.</p>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

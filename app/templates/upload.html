@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image for Face Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Image for Face Detection</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="image" id="fileInput" accept="image/*" multiple required>
+            <button type="submit">Upload and Detect</button>
+        </form>
+        <div id="result" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // Clear previous results
+
+            if (files.length === 0) {
+                resultDiv.innerHTML = '<p style="color: orange;">Please select one or more files to upload.</p>';
+                return;
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const fileResultDiv = document.createElement('div');
+                fileResultDiv.innerHTML = `<p>Processing ${file.name}...</p>`;
+                resultDiv.appendChild(fileResultDiv);
+
+                try {
+                    const response = await fetch('/api/upload_image', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ detail: 'Failed to process image and parse error response.' }));
+                        throw new Error(errorData.detail || `Failed to process ${file.name}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.face_detected) {
+                        fileResultDiv.innerHTML = `<p style="color: green;">${file.name}: Face detected!</p>`;
+                        if (data.image_url) {
+                            const img = document.createElement('img');
+                            img.src = data.image_url + '?t=' + new Date().getTime(); // Cache buster
+                            img.style.maxWidth = '300px'; // Adjusted for multiple images
+                            img.style.maxHeight = '300px';
+                            img.style.marginTop = '5px';
+                            img.style.marginBottom = '15px';
+                            fileResultDiv.appendChild(img);
+                        }
+                    } else {
+                        fileResultDiv.innerHTML = `<p style="color: red;">${file.name}: No face detected.</p>`;
+                         if (data.image_url) { // Show original image even if no face detected
+                            const img = document.createElement('img');
+                            img.src = data.image_url + '?t=' + new Date().getTime();
+                            img.style.maxWidth = '300px'; // Adjusted for multiple images
+                            img.style.maxHeight = '300px';
+                            img.style.marginTop = '5px';
+                            img.style.marginBottom = '15px';
+                            fileResultDiv.appendChild(img);
+                        }
+                    }
+                } catch (error) {
+                    fileResultDiv.innerHTML = `<p style="color: red;">Error processing ${file.name}: ${error.message}</p>`;
+                }
+            }
+            // Clear the file input after processing all files
+            fileInput.value = '';
+        });
+    </script>
+</body>
+</html>
