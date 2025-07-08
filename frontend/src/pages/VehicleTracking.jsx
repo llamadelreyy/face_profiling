@@ -283,7 +283,6 @@ const VehicleTracking = () => {
                       marginBottom: '1rem',
                       opacity: 0.6
                     }}>
-                      🚗
                     </div>
                     <div style={{
                       fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
