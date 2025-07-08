@@ -1,22 +1,199 @@
 import React, { useState, useEffect } from 'react';
-import CameraSection from '../components/CameraSection';
-import SimilarFaces from '../components/SimilarFaces';
-import AnalysisInfo from '../components/AnalysisInfo';
-import BottomPanel from '../components/BottomPanel';
 import Header from '../components/Header';
-import '../styles/Test.css';
+import BottomPanel from '../components/BottomPanel';
+import '../styles/security.css';
 
 const ArrivalDeparture = () => {
-  const [statusMessage, setStatusMessage] = useState('Ready to capture image.');
-  const [capturedImage, setCapturedImage] = useState(null);
-  const [analysisResults, setAnalysisResults] = useState(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [activeStation, setActiveStation] = useState('ALL');
-  const [analysisStartTime, setAnalysisStartTime] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  
+  const [arrivalFlights, setArrivalFlights] = useState([
+    {
+      id: 'MH1234',
+      flight: 'MH 1234',
+      from: 'Kota Kinabalu, Sabah (BKI)',
+      scheduled: '14:30',
+      estimated: '14:35',
+      status: 'DELAYED',
+      gate: 'A12',
+      terminal: '1'
+    },
+    {
+      id: 'AK5678',
+      flight: 'AK 5678',
+      from: 'Kuching, Sarawak (KCH)',
+      scheduled: '14:45',
+      estimated: '14:45',
+      status: 'ON TIME',
+      gate: 'B08',
+      terminal: '2'
+    },
+    {
+      id: 'MH9012',
+      flight: 'MH 9012',
+      from: 'Johor Bahru, Johor (JHB)',
+      scheduled: '15:00',
+      estimated: '14:55',
+      status: 'EARLY',
+      gate: 'C15',
+      terminal: '3'
+    },
+    {
+      id: 'AK3456',
+      flight: 'AK 3456',
+      from: 'Penang, Pulau Pinang (PEN)',
+      scheduled: '15:15',
+      estimated: '15:15',
+      status: 'ON TIME',
+      gate: 'A05',
+      terminal: '1'
+    },
+    {
+      id: 'MH7890',
+      flight: 'MH 7890',
+      from: 'Miri, Sarawak (MYY)',
+      scheduled: '15:30',
+      estimated: '15:45',
+      status: 'DELAYED',
+      gate: 'B12',
+      terminal: '2'
+    },
+    {
+      id: 'AK2345',
+      flight: 'AK 2345',
+      from: 'Langkawi, Kedah (LGK)',
+      scheduled: '15:45',
+      estimated: '15:40',
+      status: 'EARLY',
+      gate: 'C03',
+      terminal: '3'
+    },
+    {
+      id: 'MH6789',
+      flight: 'MH 6789',
+      from: 'Tawau, Sabah (TWU)',
+      scheduled: '16:00',
+      estimated: '16:20',
+      status: 'DELAYED',
+      gate: 'A18',
+      terminal: '1'
+    },
+    {
+      id: 'AK0123',
+      flight: 'AK 0123',
+      from: 'Alor Setar, Kedah (AOR)',
+      scheduled: '16:15',
+      estimated: '16:15',
+      status: 'ON TIME',
+      gate: 'B06',
+      terminal: '2'
+    }
+  ]);
+
+  const [departureFlights, setDepartureFlights] = useState([
+    {
+      id: 'MH4567',
+      flight: 'MH 4567',
+      to: 'Kota Kinabalu, Sabah (BKI)',
+      scheduled: '14:20',
+      estimated: '14:20',
+      status: 'BOARDING',
+      gate: 'A09',
+      terminal: '1'
+    },
+    {
+      id: 'AK8901',
+      flight: 'AK 8901',
+      to: 'Kuching, Sarawak (KCH)',
+      scheduled: '14:35',
+      estimated: '14:40',
+      status: 'DELAYED',
+      gate: 'B14',
+      terminal: '2'
+    },
+    {
+      id: 'MH2345',
+      flight: 'MH 2345',
+      to: 'Ipoh, Perak (IPH)',
+      scheduled: '14:50',
+      estimated: '14:50',
+      status: 'ON TIME',
+      gate: 'C07',
+      terminal: '3'
+    },
+    {
+      id: 'AK6789',
+      flight: 'AK 6789',
+      to: 'Penang, Pulau Pinang (PEN)',
+      scheduled: '15:05',
+      estimated: '15:05',
+      status: 'ON TIME',
+      gate: 'A16',
+      terminal: '1'
+    },
+    {
+      id: 'MH0123',
+      flight: 'MH 0123',
+      to: 'Sandakan, Sabah (SDK)',
+      scheduled: '15:20',
+      estimated: '15:35',
+      status: 'DELAYED',
+      gate: 'B02',
+      terminal: '2'
+    },
+    {
+      id: 'AK4567',
+      flight: 'AK 4567',
+      to: 'Sibu, Sarawak (SBW)',
+      scheduled: '15:35',
+      estimated: '15:30',
+      status: 'EARLY',
+      gate: 'C11',
+      terminal: '3'
+    },
+    {
+      id: 'MH8901',
+      flight: 'MH 8901',
+      to: 'Kuantan, Pahang (KUA)',
+      scheduled: '15:50',
+      estimated: '16:10',
+      status: 'DELAYED',
+      gate: 'A04',
+      terminal: '1'
+    },
+    {
+      id: 'AK2345',
+      flight: 'AK 2345',
+      to: 'Terengganu, Terengganu (TGG)',
+      scheduled: '16:05',
+      estimated: '16:05',
+      status: 'CHECK-IN',
+      gate: 'B09',
+      terminal: '2'
+    }
+  ]);
+
+  const [flightStats, setFlightStats] = useState({
+    arrivals: {
+      total: 8,
+      onTime: 3,
+      delayed: 3,
+      early: 2,
+      cancelled: 0
+    },
+    departures: {
+      total: 8,
+      onTime: 3,
+      delayed: 3,
+      early: 1,
+      boarding: 1,
+      cancelled: 0
+    }
+  });
 
   useEffect(() => {
     document.body.className = 'test-body';
-    document.documentElement.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    document.documentElement.style.fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     document.documentElement.style.backgroundColor = '#1a1a2e';
     document.documentElement.style.color = '#e0e0e0';
     document.documentElement.style.margin = '0';
@@ -28,135 +205,44 @@ const ArrivalDeparture = () => {
     if (root) {
       root.className = 'test-body';
     }
+
+    // Update time every second
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    // Simulate flight updates
+    const flightInterval = setInterval(() => {
+      // Randomly update flight statuses
+      if (Math.random() > 0.8) {
+        setArrivalFlights(prev => prev.map(flight => {
+          if (Math.random() > 0.9) {
+            const statuses = ['ON TIME', 'DELAYED', 'EARLY', 'LANDED'];
+            const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            return { ...flight, status: newStatus };
+          }
+          return flight;
+        }));
+
+        setDepartureFlights(prev => prev.map(flight => {
+          if (Math.random() > 0.9) {
+            const statuses = ['ON TIME', 'DELAYED', 'EARLY', 'BOARDING', 'DEPARTED', 'CHECK-IN'];
+            const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            return { ...flight, status: newStatus };
+          }
+          return flight;
+        }));
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(timeInterval);
+      clearInterval(flightInterval);
+    };
   }, []);
-
-  const handleCaptureImage = (dataURL) => {
-    setCapturedImage(dataURL);
-    setStatusMessage('Image captured. Click ANALYZE to process.');
-  };
-
-  const analyzeImage = async () => {
-    if (!capturedImage) return;
-    
-    setIsAnalyzing(true);
-    setStatusMessage('Analyzing image...');
-    const startTime = Date.now();
-    setAnalysisStartTime(startTime);
-
-    try {
-      const response = await fetch('/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image: capturedImage })
-      });
-
-      const result = await response.json();
-      const processingTime = Date.now() - startTime;
-      
-      if (result.success) {
-        setAnalysisResults({ ...result, processingTime });
-        displayResults(result, processingTime);
-        setStatusMessage('Analysis complete.');
-      } else {
-        setStatusMessage(result.message || 'Analysis failed.');
-      }
-    } catch (error) {
-      console.error('Error during analysis:', error);
-      setStatusMessage('Error during analysis.');
-    }
-
-    setIsAnalyzing(false);
-  };
-
-  const displayResults = (result, processingTime) => {
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = '';
-
-    document.getElementById('faces-count').textContent = result.faces ? result.faces.length : 0;
-    document.getElementById('processing-time').textContent = `${processingTime}ms`;
-    
-    if (result.faces && result.faces.length > 0) {
-      const firstFace = result.faces[0];
-      document.getElementById('confidence-level').textContent = `${(firstFace.confidence * 100).toFixed(1)}%`;
-      
-      result.faces.forEach((face, index) => {
-        const faceDiv = document.createElement('div');
-        faceDiv.className = 'face-result';
-        faceDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background-color: rgba(40,40,80,0.8); border-radius: 8px; border: 1px solid rgba(0,191,255,0.4);';
-        faceDiv.innerHTML = `
-          <h4 style="color: #00bfff; margin-top: 0;">Face ${index + 1}</h4>
-          <p><strong>Confidence:</strong> ${(face.confidence * 100).toFixed(1)}%</p>
-          <p><strong>Location:</strong> (${face.location.left}, ${face.location.top})</p>
-          ${face.encoding ? '<p><strong>Encoding:</strong> Generated</p>' : ''}
-        `;
-        resultsDiv.appendChild(faceDiv);
-      });
-
-      if (result.similar_faces && result.similar_faces.length > 0) {
-        document.getElementById('similar-count').textContent = result.similar_faces.length;
-        
-        const bestMatch = result.similar_faces[0];
-        document.getElementById('best-match').textContent = bestMatch.filename;
-        document.getElementById('similarity-score').textContent = `${(bestMatch.distance * 100).toFixed(1)}%`;
-        
-        const similarDiv = document.createElement('div');
-        similarDiv.className = 'similar-faces';
-        similarDiv.style.cssText = 'margin-top: 20px; padding: 15px; background-color: rgba(30,30,60,0.9); border-radius: 8px; border: 1px solid rgba(0,191,255,0.3);';
-        similarDiv.innerHTML = '<h4 style="color: #87ceeb; margin-top: 0;">Similar Faces Found:</h4>';
-        
-        result.similar_faces.forEach(similar => {
-          const similarFaceDiv = document.createElement('div');
-          similarFaceDiv.style.cssText = 'margin-bottom: 10px; padding: 8px; background-color: rgba(50,50,90,0.7); border-radius: 6px;';
-          similarFaceDiv.innerHTML = `
-            <p><strong>Match:</strong> ${similar.filename}</p>
-            <p><strong>Similarity:</strong> ${(similar.distance * 100).toFixed(1)}%</p>
-          `;
-          similarDiv.appendChild(similarFaceDiv);
-        });
-        
-        resultsDiv.appendChild(similarDiv);
-      } else {
-        document.getElementById('similar-count').textContent = '0';
-        document.getElementById('best-match').textContent = 'N/A';
-        document.getElementById('similarity-score').textContent = 'N/A';
-      }
-    } else {
-      resultsDiv.innerHTML = '<p style="color: #888; font-style: italic; text-align: center; padding: 20px;">No faces detected in the image.</p>';
-      document.getElementById('confidence-level').textContent = 'N/A';
-      document.getElementById('similar-count').textContent = '0';
-      document.getElementById('best-match').textContent = 'N/A';
-      document.getElementById('similarity-score').textContent = 'N/A';
-    }
-  };
-
-  const clearResults = () => {
-    document.getElementById('results').innerHTML = '<div class="placeholder-text">No analysis performed yet. Capture an image and click Analyze to begin.</div>';
-    setStatusMessage('Ready to capture image.');
-    setCapturedImage(null);
-    
-    document.getElementById('faces-count').textContent = '0';
-    document.getElementById('confidence-level').textContent = 'N/A';
-    document.getElementById('processing-time').textContent = 'N/A';
-    document.getElementById('similar-count').textContent = '0';
-    document.getElementById('best-match').textContent = 'N/A';
-    document.getElementById('similarity-score').textContent = 'N/A';
-    
-    setAnalysisResults(null);
-  };
 
   const handleStationClick = (station) => {
     setActiveStation(station);
-    updateStationDisplay(station);
-  };
-
-  const updateStationDisplay = (station) => {
-    if (station === '01' || station === 'ALL') {
-      setStatusMessage('Arrival Departure Station - Ready to capture image.');
-    } else {
-      setStatusMessage(`Monitoring Station ${station} - Surveillance mode active.`);
-    }
   };
 
   const handleControlPanelClick = (buttonText) => {
@@ -177,32 +263,400 @@ const ArrivalDeparture = () => {
     window.location.href = '/';
   };
 
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'ON TIME': return '#00bfff';
+      case 'DELAYED': return '#ff4444';
+      case 'EARLY': return '#00ff00';
+      case 'BOARDING': return '#ffa500';
+      case 'LANDED': return '#87ceeb';
+      case 'DEPARTED': return '#87ceeb';
+      case 'CHECK-IN': return '#00bfff';
+      case 'CANCELLED': return '#ff0000';
+      default: return '#e0e0e0';
+    }
+  };
+
+  const formatTime = (time) => {
+    return time.toLocaleTimeString('en-US', { 
+      hour12: false, 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
     <>
       <div className="test-scanlines"></div>
       <div className="test-container">
-        <Header title="Arrival Departure System" />
+        <Header title="Arrival & Departure Information System" />
         
-        <div className="test-main-content-layout">
-          <CameraSection 
-            onCaptureImage={handleCaptureImage}
-            onAnalyzeImage={analyzeImage}
-            onClearResults={clearResults}
-            capturedImage={capturedImage}
-            isAnalyzing={isAnalyzing}
-          />
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          flex: 1, 
+          overflow: 'hidden',
+          padding: '1rem',
+          gap: '1rem'
+        }}>
+          {/* Current Time Display */}
+          <div style={{
+            background: 'rgba(25, 25, 45, 0.75)',
+            borderRadius: '8px',
+            border: '1px solid rgba(0, 191, 255, 0.3)',
+            boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+            padding: '1rem',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              color: '#00bfff',
+              marginBottom: '0.5rem'
+            }}>
+              {formatTime(currentTime)}
+            </div>
+            <div style={{
+              fontSize: '1rem',
+              color: '#87ceeb'
+            }}>
+              {formatDate(currentTime)}
+            </div>
+          </div>
 
-          <section className="test-results-section-wrapper">
-            <h2 className="test-h2">Analysis Results</h2>
-            <div id="statusMessages" className="test-status-messages">{statusMessage}</div>
-            
-            <div className="test-results-internal-layout">
-              <div className="test-results-right-column">
-                <SimilarFaces results={analysisResults} />
-                <AnalysisInfo />
+          {/* Flight Screens - Side by Side */}
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            flex: 1,
+            minHeight: 0
+          }}>
+            {/* Arrivals Screen */}
+            <div style={{
+              flex: 1,
+              background: 'rgba(25, 25, 45, 0.75)',
+              borderRadius: '8px',
+              border: '1px solid rgba(0, 191, 255, 0.3)',
+              boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <div style={{
+                background: 'rgba(0, 191, 255, 0.1)',
+                padding: '1rem',
+                borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <h2 style={{
+                  color: '#00bfff',
+                  fontSize: '1.5rem',
+                  margin: 0,
+                  textShadow: '0 0 8px rgba(0,191,255,0.5)'
+                }}>
+                  ✈️ ARRIVALS
+                </h2>
+              </div>
+              
+              {/* Arrivals Header */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr',
+                gap: '0.5rem',
+                padding: '0.75rem',
+                background: 'rgba(0, 191, 255, 0.05)',
+                borderBottom: '1px solid rgba(0, 191, 255, 0.2)',
+                fontSize: '0.9rem',
+                fontWeight: 'bold',
+                color: '#87ceeb'
+              }}>
+                <div>FLIGHT</div>
+                <div>FROM</div>
+                <div>SCHEDULED</div>
+                <div>ESTIMATED</div>
+                <div>STATUS</div>
+                <div>GATE</div>
+              </div>
+              
+              {/* Arrivals List */}
+              <div style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '0.5rem'
+              }}>
+                {arrivalFlights.map((flight) => (
+                  <div key={flight.id} style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr',
+                    gap: '0.5rem',
+                    padding: '0.75rem 0.25rem',
+                    borderBottom: '1px solid rgba(70, 70, 100, 0.3)',
+                    fontSize: '0.85rem',
+                    alignItems: 'center'
+                  }}>
+                    <div style={{ color: '#00bfff', fontWeight: 'bold' }}>
+                      {flight.flight}
+                    </div>
+                    <div style={{ color: '#e0e0e0' }}>
+                      {flight.from}
+                    </div>
+                    <div style={{ color: '#87ceeb' }}>
+                      {flight.scheduled}
+                    </div>
+                    <div style={{ color: '#e0e0e0' }}>
+                      {flight.estimated}
+                    </div>
+                    <div style={{ 
+                      color: getStatusColor(flight.status),
+                      fontWeight: 'bold',
+                      fontSize: '0.8rem'
+                    }}>
+                      {flight.status}
+                    </div>
+                    <div style={{ color: '#87ceeb' }}>
+                      {flight.gate}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </section>
+
+            {/* Departures Screen */}
+            <div style={{
+              flex: 1,
+              background: 'rgba(25, 25, 45, 0.75)',
+              borderRadius: '8px',
+              border: '1px solid rgba(0, 191, 255, 0.3)',
+              boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <div style={{
+                background: 'rgba(0, 191, 255, 0.1)',
+                padding: '1rem',
+                borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <h2 style={{
+                  color: '#00bfff',
+                  fontSize: '1.5rem',
+                  margin: 0,
+                  textShadow: '0 0 8px rgba(0,191,255,0.5)'
+                }}>
+                  🛫 DEPARTURES
+                </h2>
+              </div>
+              
+              {/* Departures Header */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr',
+                gap: '0.5rem',
+                padding: '0.75rem',
+                background: 'rgba(0, 191, 255, 0.05)',
+                borderBottom: '1px solid rgba(0, 191, 255, 0.2)',
+                fontSize: '0.9rem',
+                fontWeight: 'bold',
+                color: '#87ceeb'
+              }}>
+                <div>FLIGHT</div>
+                <div>TO</div>
+                <div>SCHEDULED</div>
+                <div>ESTIMATED</div>
+                <div>STATUS</div>
+                <div>GATE</div>
+              </div>
+              
+              {/* Departures List */}
+              <div style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '0.5rem'
+              }}>
+                {departureFlights.map((flight) => (
+                  <div key={flight.id} style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr',
+                    gap: '0.5rem',
+                    padding: '0.75rem 0.25rem',
+                    borderBottom: '1px solid rgba(70, 70, 100, 0.3)',
+                    fontSize: '0.85rem',
+                    alignItems: 'center'
+                  }}>
+                    <div style={{ color: '#00bfff', fontWeight: 'bold' }}>
+                      {flight.flight}
+                    </div>
+                    <div style={{ color: '#e0e0e0' }}>
+                      {flight.to}
+                    </div>
+                    <div style={{ color: '#87ceeb' }}>
+                      {flight.scheduled}
+                    </div>
+                    <div style={{ color: '#e0e0e0' }}>
+                      {flight.estimated}
+                    </div>
+                    <div style={{ 
+                      color: getStatusColor(flight.status),
+                      fontWeight: 'bold',
+                      fontSize: '0.8rem'
+                    }}>
+                      {flight.status}
+                    </div>
+                    <div style={{ color: '#87ceeb' }}>
+                      {flight.gate}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Flight Statistics */}
+          <div style={{
+            display: 'flex',
+            gap: '1rem'
+          }}>
+            {/* Arrivals Statistics */}
+            <div style={{
+              flex: 1,
+              background: 'rgba(25, 25, 45, 0.75)',
+              borderRadius: '8px',
+              border: '1px solid rgba(0, 191, 255, 0.3)',
+              boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+              padding: '1rem'
+            }}>
+              <h3 style={{
+                color: '#87ceeb',
+                fontSize: '1.2rem',
+                margin: '0 0 1rem 0',
+                borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
+                paddingBottom: '0.5rem',
+                textAlign: 'center'
+              }}>
+                Arrivals Statistics
+              </h3>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '1rem',
+                textAlign: 'center'
+              }}>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#00bfff' }}>
+                    {flightStats.arrivals.total}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>Total</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#00bfff' }}>
+                    {flightStats.arrivals.onTime}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>On Time</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ff4444' }}>
+                    {flightStats.arrivals.delayed}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>Delayed</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#00ff00' }}>
+                    {flightStats.arrivals.early}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>Early</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ff0000' }}>
+                    {flightStats.arrivals.cancelled}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>Cancelled</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#87ceeb' }}>
+                    {Math.round((flightStats.arrivals.onTime / flightStats.arrivals.total) * 100)}%
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>On-Time Rate</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Departures Statistics */}
+            <div style={{
+              flex: 1,
+              background: 'rgba(25, 25, 45, 0.75)',
+              borderRadius: '8px',
+              border: '1px solid rgba(0, 191, 255, 0.3)',
+              boxShadow: '0 0 15px rgba(0, 191, 255, 0.2)',
+              padding: '1rem'
+            }}>
+              <h3 style={{
+                color: '#87ceeb',
+                fontSize: '1.2rem',
+                margin: '0 0 1rem 0',
+                borderBottom: '1px solid rgba(0, 191, 255, 0.3)',
+                paddingBottom: '0.5rem',
+                textAlign: 'center'
+              }}>
+                Departures Statistics
+              </h3>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '1rem',
+                textAlign: 'center'
+              }}>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#00bfff' }}>
+                    {flightStats.departures.total}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>Total</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#00bfff' }}>
+                    {flightStats.departures.onTime}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>On Time</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ff4444' }}>
+                    {flightStats.departures.delayed}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>Delayed</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#00ff00' }}>
+                    {flightStats.departures.early}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>Early</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ffa500' }}>
+                    {flightStats.departures.boarding}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>Boarding</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#87ceeb' }}>
+                    {Math.round((flightStats.departures.onTime / flightStats.departures.total) * 100)}%
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#87ceeb' }}>On-Time Rate</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <BottomPanel 
@@ -211,7 +665,6 @@ const ArrivalDeparture = () => {
           onControlPanelClick={handleControlPanelClick}
           onBackClick={handleBackClick}
         />
-        
       </div>
     </>
   );

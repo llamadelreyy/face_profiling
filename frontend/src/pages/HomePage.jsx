@@ -8,7 +8,6 @@ const HomePage = () => {
       id: 'alarm-verification',
       title: 'Alarm Verification',
       description: 'Monitor and verify security alarms across all terminals',
-      icon: '🚨',
       path: '/alarm-verification',
       status: 'active'
     },
@@ -16,7 +15,6 @@ const HomePage = () => {
       id: 'intrusion-monitoring',
       title: 'Intrusion Monitoring',
       description: 'Real-time perimeter and restricted area monitoring',
-      icon: '🛡️',
       path: '/intrusion-monitoring',
       status: 'active'
     },
@@ -24,7 +22,6 @@ const HomePage = () => {
       id: 'arrival-departure',
       title: 'Arrival and Departure',
       description: 'Flight status and passenger flow management',
-      icon: '✈️',
       path: '/arrival-departure',
       status: 'active'
     },
@@ -32,7 +29,6 @@ const HomePage = () => {
       id: 'status-processing',
       title: 'Status Processing Area',
       description: 'Central processing and status coordination hub',
-      icon: '📊',
       path: '/status-processing',
       status: 'active'
     },
@@ -40,7 +36,6 @@ const HomePage = () => {
       id: 'vehicle-tracking',
       title: 'Vehicle Identification Tracking',
       description: 'Track and monitor all vehicles in airport premises',
-      icon: '🚗',
       path: '/vehicle-tracking',
       status: 'active'
     },
@@ -48,7 +43,6 @@ const HomePage = () => {
       id: 'body-scanner',
       title: 'Body Scanner',
       description: 'Advanced body scanning security checkpoint',
-      icon: '👤',
       path: '/body-scanner',
       status: 'active'
     },
@@ -56,7 +50,6 @@ const HomePage = () => {
       id: 'vehicle-scanner',
       title: 'Vehicle Scanner',
       description: 'Comprehensive vehicle inspection and scanning',
-      icon: '🚛',
       path: '/vehicle-scanner',
       status: 'active'
     },
@@ -64,7 +57,6 @@ const HomePage = () => {
       id: 'container-scanner',
       title: 'Container Scanner',
       description: 'Cargo and container security screening',
-      icon: '📦',
       path: '/container-scanner',
       status: 'active'
     },
@@ -72,7 +64,6 @@ const HomePage = () => {
       id: 'identification-tracking',
       title: 'Identification Tracking',
       description: 'Personnel and visitor identification management',
-      icon: '🆔',
       path: '/identification-tracking',
       status: 'active'
     },
@@ -80,7 +71,6 @@ const HomePage = () => {
       id: 'facial-recognition',
       title: 'Facial Recognition at Gate',
       description: 'Advanced facial recognition for gate security',
-      icon: '👁️',
       path: '/recognition',
       status: 'active'
     },
@@ -88,7 +78,6 @@ const HomePage = () => {
       id: 'terminal-security',
       title: 'Terminal Security',
       description: 'Comprehensive terminal security monitoring',
-      icon: '🏢',
       path: '/terminal-security',
       status: 'active'
     },
@@ -96,7 +85,6 @@ const HomePage = () => {
       id: 'security-check',
       title: 'Security Check',
       description: 'General security checkpoint management',
-      icon: '🔍',
       path: '/security-check',
       status: 'active'
     }
@@ -137,12 +125,11 @@ const HomePage = () => {
             <div className="modules-grid">
               {securityModules.map((module) => (
                 <Link key={module.id} to={module.path} className="module-card">
-                  <div className="module-icon">{module.icon}</div>
                   <h3>{module.title}</h3>
                   <p>{module.description}</p>
                   <div className="module-status">
                     <span className="status-indicator active"></span>
-                    <span>Active</span>
+                    <span>OPERATIONAL</span>
                   </div>
                 </Link>
               ))}

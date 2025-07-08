@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +7,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     color: #e0e0e0;
     min-height: 100vh;
@@ -174,21 +176,21 @@ body {
 }
 
 .status.active {
-    background: rgba(0, 255, 0, 0.2);
-    color: #00ff00;
-    border: 1px solid #00ff00;
+    background: rgba(0, 191, 255, 0.2);
+    color: #00bfff;
+    border: 1px solid #00bfff;
 }
 
 .status.inactive {
-    background: rgba(255, 0, 0, 0.2);
-    color: #ff4444;
-    border: 1px solid #ff4444;
+    background: rgba(128, 128, 128, 0.2);
+    color: #888888;
+    border: 1px solid #888888;
 }
 
 .status.warning {
-    background: rgba(255, 165, 0, 0.2);
-    color: #ffa500;
-    border: 1px solid #ffa500;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+    border: 1px solid #e0e0e0;
 }
 
 /* Footer */
@@ -643,7 +645,7 @@ body {
 
 #statusMessages {
     margin: 20px auto;
-    color: #ffc107;
+    color: #87ceeb;
     font-style: italic;
     font-size: 1.1em;
     min-height: 25px;
@@ -1011,15 +1013,15 @@ body {
 }
 
 .stat-card.online .stat-value {
-  color: #00ff00;
+  color: #00bfff;
 }
 
 .stat-card.warning .stat-value {
-  color: #ffa500;
+  color: #e0e0e0;
 }
 
 .stat-card.success .stat-value {
-  color: #00ff00;
+  color: #87ceeb;
 }
 
 .stat-card.info .stat-value {
@@ -1027,15 +1029,22 @@ body {
 }
 
 .modules-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
+  justify-content: center;
+}
+
+.modules-grid .module-card {
+  flex: 0 0 calc(20% - 1.2rem);
+  max-width: 280px;
+  min-width: 250px;
 }
 
 .module-card {
   background-color: rgba(25, 25, 45, 0.75);
   border: 1px solid rgba(0, 191, 255, 0.3);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 1.5rem;
   transition: all 0.3s ease;
   box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
@@ -1044,44 +1053,44 @@ body {
   color: inherit;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   text-align: center;
+  min-height: 140px;
 }
 
 .module-card:hover {
-  background-color: rgba(0, 191, 255, 0.1);
-  box-shadow: 0 0 25px rgba(0, 191, 255, 0.4);
-  transform: translateY(-5px);
+  background-color: rgba(0, 191, 255, 0.05);
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+  transform: translateY(-2px);
   border-color: #00bfff;
-}
-
-.module-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  display: block;
 }
 
 .module-card h3 {
   color: #00bfff;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin-bottom: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .module-card p {
   color: #c0c0c0;
   margin-bottom: 1rem;
   line-height: 1.4;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  flex-grow: 1;
 }
 
 .module-status {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   font-size: 0.8rem;
-  color: #00ff00;
+  color: #00bfff;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -1090,13 +1099,13 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #00ff00;
-  box-shadow: 0 0 5px #00ff00;
+  background-color: #00bfff;
+  box-shadow: 0 0 5px #00bfff;
 }
 
 .status-indicator.active {
-  background-color: #00ff00;
-  box-shadow: 0 0 5px #00ff00;
+  background-color: #00bfff;
+  box-shadow: 0 0 5px #00bfff;
 }
 
 /* Homepage Responsive Design */
@@ -1122,9 +1131,9 @@ body {
     gap: 0.8rem;
   }
   
-  .modules-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .modules-grid .module-card {
+    flex: 0 0 calc(50% - 0.75rem);
+    min-width: 200px;
   }
   
   .module-card {
@@ -1133,5 +1142,10 @@ body {
   
   .homepage-header-title {
     font-size: clamp(1rem, 6vw, 1.8rem);
+  }
+  
+  .modules-grid .module-card {
+    flex: 0 0 100%;
+    min-width: auto;
   }
 }
